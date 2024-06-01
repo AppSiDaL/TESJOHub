@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
 import moment from "moment";
+import { ThemedCard } from "@/components/ThemedCard";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -174,7 +175,7 @@ export default function HomeScreen() {
       />
       <ThemedView>
         {Posts.map((item, index) => (
-          <ThemedView key={index} style={styles.postContainer}>
+          <ThemedView isBordered key={index} style={styles.postContainer}>
             <ThemedView style={styles.postHeader}>
               <ThemedView style={styles.userInfo}>
                 <Image style={styles.userImg} source={{ uri: item.userImg }} />
