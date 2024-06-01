@@ -7,7 +7,8 @@ import { useState } from "react";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
 import moment from "moment";
-import { ThemedCard } from "@/components/ThemedCard";
+import { ThemedButton } from "@/components/ThemedButton";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -163,6 +164,21 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
     >
+      <ThemedView>
+        <ThemedView style={styles.header}>
+          <Image
+            style={{ width: 50, height: 50 }}
+            source={require("@/assets/images/tesjohub-logo.png")}
+          />
+          <ThemedButton
+            onPress={() => alert("Create Post")}
+          >
+            <TabBarIcon name="add-circle" />
+          </ThemedButton>
+        </ThemedView>
+        <ThemedText type="title">TESJoHUB</ThemedText>
+        <ThemedText>This is a social app made in React Native.</ThemedText>
+      </ThemedView>
       <ThemedLikesModal
         modalVisible={modalVisible}
         modalContent={modalContent}
@@ -226,6 +242,12 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+  },
   postContainer: {
     margin: 10,
     padding: 10,
