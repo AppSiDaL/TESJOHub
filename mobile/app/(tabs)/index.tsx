@@ -1,11 +1,16 @@
-import { Image, StyleSheet, Platform } from "react-native";
+import { Image, StyleSheet, Platform, Pressable } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { ThemedViewPressable } from "@/components/ThemedViewPressable";
+import { useState } from "react";
+import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 
 export default function HomeScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState([]);
   const Posts = [
     {
       id: "1",
@@ -15,22 +20,41 @@ export default function HomeScreen() {
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg:
         "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/Partidos-politicos-Mexico.jpg",
-      liked: true,
-      likes: "14",
+      likes: [
+        {
+          id: "1",
+          userName: "John Doe",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+        {
+          id: "2",
+          userName: "Ken William",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+      ],
       comments: [
         {
           id: "1",
           userName: "John Doe",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
           commentText: "This is hilarious!",
         },
         {
           id: "2",
           userName: "Ken William",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
           commentText: "I know right?!",
         },
         {
           id: "3",
           userName: "Selina Paul",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+
           commentText: "Wow!",
         },
       ],
@@ -42,8 +66,20 @@ export default function HomeScreen() {
       postTime: "2 hours ago",
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg: "none",
-      liked: false,
-      likes: "8",
+      likes: [
+        {
+          id: "1",
+          userName: "John Doe",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+        {
+          id: "2",
+          userName: "Ken William",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+      ],
       comments: [],
     },
     {
@@ -54,8 +90,20 @@ export default function HomeScreen() {
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg:
         "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/FVT7HYTJF2SVT0C.webp",
-      liked: true,
-      likes: "1",
+      likes: [
+        {
+          id: "1",
+          userName: "John Doe",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+        {
+          id: "2",
+          userName: "Ken William",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+      ],
       comments: [],
     },
     {
@@ -66,39 +114,67 @@ export default function HomeScreen() {
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg:
         "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/unnamed.png",
-      liked: true,
-      likes: "22",
+      likes: [
+        {
+          id: "1",
+          userName: "John Doe",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+        {
+          id: "2",
+          userName: "Ken William",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+        },
+      ],
       comments: [
         {
           id: "1",
           userName: "Ken William",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+
           commentText: "This is hilarious!",
         },
         {
           id: "2",
           userName: "Jenny Doe",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+
           commentText: "I know right?!",
         },
       ],
     },
   ];
-
+  const handlePress = (content: any) => {
+    setModalContent(content);
+    setModalVisible(true);
+    console.log("Pressed");
+  };
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
     >
+      <ThemedLikesModal
+        modalVisible={modalVisible}
+        modalContent={modalContent}
+        setModalVisible={setModalVisible}
+      />
       <ThemedView>
         {Posts.map((item, index) => (
           <ThemedView key={index} style={styles.postContainer}>
             <ThemedView style={styles.postHeader}>
               <ThemedView style={styles.userInfo}>
-                <Image
-                  style={styles.userImg}
-                  source={{ uri: item.userImg }}
-                />
+                <Image style={styles.userImg} source={{ uri: item.userImg }} />
                 <ThemedView>
-                  <ThemedText style={styles.userName}>{item.userName}</ThemedText>
-                  <ThemedText style={styles.postTime}>{item.postTime}</ThemedText>
+                  <ThemedText style={styles.userName}>
+                    {item.userName}
+                  </ThemedText>
+                  <ThemedText style={styles.postTime}>
+                    {item.postTime}
+                  </ThemedText>
                 </ThemedView>
               </ThemedView>
               <ThemedText>...</ThemedText>
@@ -114,12 +190,22 @@ export default function HomeScreen() {
               <ThemedView />
             )}
             <ThemedView style={styles.postFooter}>
-              <ThemedView style={styles.postFooter}>
-                <ThemedText style={styles.postLikes}>{item.likes} Likes</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.postFooter}>
-                <ThemedText style={styles.postLikes}>{item.comments.length} comments</ThemedText>
-              </ThemedView>
+              <ThemedViewPressable
+                style={styles.postFooter}
+                onPress={() => handlePress(item.likes)}
+              >
+                <ThemedText style={styles.postLikes}>
+                  {item.likes.length} Likes
+                </ThemedText>
+              </ThemedViewPressable>
+              <ThemedViewPressable
+                style={styles.postFooter}
+                onPress={() => handlePress(item.comments.length + " comments")}
+              >
+                <ThemedText style={styles.postLikes}>
+                  {item.comments.length} comments
+                </ThemedText>
+              </ThemedViewPressable>
             </ThemedView>
           </ThemedView>
         ))}
@@ -135,13 +221,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   postHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   userImg: {
     width: 50,
@@ -150,7 +236,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   userName: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   postTime: {
@@ -161,15 +247,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postImg: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: 10,
     marginTop: 10,
   },
   postFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 10,
   },
   postLikes: {
