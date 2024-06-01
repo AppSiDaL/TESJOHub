@@ -1,22 +1,24 @@
-import { Image, StyleSheet, Platform, Pressable } from "react-native";
-
-import { HelloWave } from "@/components/HelloWave";
+import { Image, StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedViewPressable } from "@/components/ThemedViewPressable";
 import { useState } from "react";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
+import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
+import moment from "moment";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
+  const [commentsModalVisible, setCommentsModalVisible] = useState(false);
+  const [commentsModalContent, setCommentsModalContent] = useState([]);
   const Posts = [
     {
       id: "1",
       userName: "Jenny Doe",
       userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      postTime: "4 mins ago",
+      time: "01/06/2024 08:20",
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg:
         "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/Partidos-politicos-Mexico.jpg",
@@ -63,7 +65,7 @@ export default function HomeScreen() {
       id: "2",
       userName: "John Doe",
       userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      postTime: "2 hours ago",
+      time: "01/06/2024 8:20",
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg: "none",
       likes: [
@@ -86,7 +88,7 @@ export default function HomeScreen() {
       id: "3",
       userName: "Ken William",
       userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      postTime: "1 hours ago",
+      time: "01/06/2024 8:20",
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg:
         "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/FVT7HYTJF2SVT0C.webp",
@@ -110,7 +112,7 @@ export default function HomeScreen() {
       id: "4",
       userName: "Selina Paul",
       userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      postTime: "1 day ago",
+      time: "01/06/2024 8:20",
       post: "Hey there, this is my test for a post of my social app in React Native.",
       postImg:
         "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/unnamed.png",
@@ -148,10 +150,13 @@ export default function HomeScreen() {
       ],
     },
   ];
-  const handlePress = (content: any) => {
+  const handlePressLikesModal = (content: any) => {
     setModalContent(content);
     setModalVisible(true);
-    console.log("Pressed");
+  };
+  const handlePressCommentsModal = (content: any) => {
+    setCommentsModalContent(content);
+    setCommentsModalVisible(true);
   };
   return (
     <ParallaxScrollView
@@ -161,6 +166,11 @@ export default function HomeScreen() {
         modalVisible={modalVisible}
         modalContent={modalContent}
         setModalVisible={setModalVisible}
+      />
+      <ThemedCommentsModal
+        modalVisible={commentsModalVisible}
+        modalContent={commentsModalContent}
+        setModalVisible={setCommentsModalVisible}
       />
       <ThemedView>
         {Posts.map((item, index) => (
@@ -173,7 +183,7 @@ export default function HomeScreen() {
                     {item.userName}
                   </ThemedText>
                   <ThemedText style={styles.postTime}>
-                    {item.postTime}
+                    {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
                   </ThemedText>
                 </ThemedView>
               </ThemedView>
@@ -192,7 +202,7 @@ export default function HomeScreen() {
             <ThemedView style={styles.postFooter}>
               <ThemedViewPressable
                 style={styles.postFooter}
-                onPress={() => handlePress(item.likes)}
+                onPress={() => handlePressLikesModal(item.likes)}
               >
                 <ThemedText style={styles.postLikes}>
                   {item.likes.length} Likes
@@ -200,7 +210,7 @@ export default function HomeScreen() {
               </ThemedViewPressable>
               <ThemedViewPressable
                 style={styles.postFooter}
-                onPress={() => handlePress(item.comments.length + " comments")}
+                onPress={() => handlePressCommentsModal(item.comments)}
               >
                 <ThemedText style={styles.postLikes}>
                   {item.comments.length} comments
