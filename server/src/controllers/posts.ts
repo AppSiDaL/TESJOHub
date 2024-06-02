@@ -11,8 +11,13 @@ const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const middleware = require('../middleware')
 
-postRouter.get('/', async (_request: Request, response: Response) => {
-  const posts = await Post.find({})
+postRouter.get('/', async (request: CustonRequest, response: Response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (decodedToken.id === undefined) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+  const posts = await Post.find({ user: user._id })
     .populate('user', { posts: 0 })
     .populate('comments', { post: 0 })
     .populate('likes', { posts: 0 })
@@ -97,8 +102,9 @@ postRouter.post(
     let uploadResponse
 
     try {
-      uploadResponse = await publitio
-        .uploadFile(fileBuffer, 'file', { folder: 'mvMNDiMe' })
+      uploadResponse = await publitio.uploadFile(fileBuffer, 'file', {
+        folder: 'mvMNDiMe'
+      })
     } catch (error) {
       response.status(500).json({ error: error.message })
     } finally {

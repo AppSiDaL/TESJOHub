@@ -8,7 +8,7 @@ interface LoginData{
  const createLogin = async (data: LoginData) => {
   try {
     console.log(data)
-    const response = await axios.post(`${API_URL}/login`, data);
+    const response = await axios.post(`${API_URL}login`, data);
     
     return response.data;
   } catch (error) {
