@@ -14,7 +14,8 @@ const middleware = require('../middleware')
 postRouter.get('/', async (_request: Request, response: Response) => {
   const posts = await Post.find({})
     .populate('user', { posts: 0 })
-    .populate('comments')
+    .populate('comments', { post: 0 })
+    .populate('likes', { posts: 0 })
   response.json(posts)
 })
 
