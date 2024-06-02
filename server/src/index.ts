@@ -8,6 +8,7 @@ const config = require('./utils/config')
 const { postRouter } = require('./controllers')
 const { userRouter } = require('./controllers')
 const { loginRouter } = require('./controllers')
+const { commentRouter } = require('./controllers')
 const middleware = require('./middleware')
 
 app.use(cors())
@@ -32,6 +33,7 @@ const start = async (): Promise<void> => {
 app.use('/api/posts', postRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/comments', commentRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 

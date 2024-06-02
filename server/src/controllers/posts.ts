@@ -12,8 +12,10 @@ const jwt = require('jsonwebtoken')
 const middleware = require('../middleware')
 
 postRouter.get('/', async (_request: Request, response: Response) => {
-  const notes = await Post.find({})
-  response.json(notes)
+  const posts = await Post.find({})
+    .populate('user', { posts: 0 })
+    .populate('comments')
+  response.json(posts)
 })
 
 postRouter.get(
