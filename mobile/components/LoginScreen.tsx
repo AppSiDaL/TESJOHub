@@ -19,6 +19,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     try {
       const data = await createLogin({ username, password });
       await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("expiresIn", data.expiresIn);
       onLogin();
     } catch (error) {
       console.error(error);

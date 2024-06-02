@@ -24,15 +24,20 @@ loginRouter.post('/', async (request: CustonRequest, response: Response) => {
     id: user._id
   }
 
+  const expiresIn = 60 * 60 * 24 // 24 hours in seconds
+  const expirationDate = new Date(Date.now() + expiresIn * 1000) // Convert to milliseconds
+
   const token = jwt.sign(
     userForToken,
     process.env.SECRET,
-    { expiresIn: 60 * 60 * 24 }
+    { expiresIn }
   )
 
   response
     .status(200)
-    .send({ token, username: user.username, name: user.name })
+    .send({ token, username: user.username, name: user.name, expiresIn: expirationDate.toISOString() })
 })
+
+module.exports = loginRouter
 
 module.exports = loginRouter

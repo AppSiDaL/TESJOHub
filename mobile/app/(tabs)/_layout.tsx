@@ -14,9 +14,19 @@ export default function TabLayout() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const token = await AsyncStorage.getItem("token");
-      setIsLoggedIn(!!token);
+      const expiresIn = await AsyncStorage.getItem("expiresIn");
+  
+      if (token && expiresIn) {
+        const expiresDate = new Date(expiresIn);
+        const delay = expiresDate.getTime() - Date.now();
+        setTimeout(() => AsyncStorage.removeItem("token"), delay);
+  
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
     };
-
+  
     checkLoginStatus();
   }, []);
 

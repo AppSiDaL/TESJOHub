@@ -70,7 +70,7 @@ postRouter.put(
   }
 )
 
-const upload = multer({ dest: '../uploads/' })
+const upload = multer({ dest: './uploads/' })
 
 postRouter.post(
   '/',
