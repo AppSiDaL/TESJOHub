@@ -8,6 +8,7 @@ import { ThemedButton } from "@/components/ThemedButton";
 import { createLogin } from "@/services/loginService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import postsService from "@/services/postsService";
 interface LoginScreenProps {
   onLogin: () => void;
 }
@@ -18,6 +19,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const login = async () => {
     try {
       const data = await createLogin({ username, password });
+      postsService.setToken((data.token as string))
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("expiresIn", data.expiresIn);
       onLogin();

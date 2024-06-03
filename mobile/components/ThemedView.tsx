@@ -1,6 +1,7 @@
 import { View, type ViewProps } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { ScrollView } from "react-native-gesture-handler";
 
 export type ThemedViewProps = ViewProps & {
   lightColor?: string;

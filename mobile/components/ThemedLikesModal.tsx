@@ -14,13 +14,14 @@ import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { ThemedButton } from "./ThemedButton";
 import { TabBarIcon } from "./navigation/TabBarIcon";
+import { Like } from "@/types";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
     lightColor?: string;
     darkColor?: string;
     modalVisible: boolean;
-    modalContent: any[];
+    modalContent: Like[];
     setModalVisible: (visible: boolean) => void;
   };
 
@@ -37,7 +38,7 @@ export function ThemedLikesModal({
     { light: lightColor, dark: darkColor },
     "background"
   );
-
+  console.log(modalContent)
   return (
     <Modal
       animationType="slide"
@@ -63,14 +64,14 @@ export function ThemedLikesModal({
               <ThemedView style={styles.likeView}>
                 <Image
                   style={styles.userImg}
-                  source={{ uri: item.avatarUrl }}
+                  source={{ uri: item.user.avatarUrl?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s"}}
                 />
                 <ThemedText style={styles.modalText}>
-                  {item.userName}
+                  {item.user.username}
                 </ThemedText>
               </ThemedView>
             )}
-            keyExtractor={(item) => item}
+            keyExtractor={(item) => item.id}
           />
         </ThemedView>
       </ThemedView>

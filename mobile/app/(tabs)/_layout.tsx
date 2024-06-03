@@ -6,6 +6,7 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import LoginScreen from "../../components/LoginScreen";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 export default function TabLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,68 +16,69 @@ export default function TabLayout() {
     const checkLoginStatus = async () => {
       const token = await AsyncStorage.getItem("token");
       const expiresIn = await AsyncStorage.getItem("expiresIn");
-  
+
       if (token && expiresIn) {
+        setIsLoggedIn(true);
         const expiresDate = new Date(expiresIn);
         const delay = expiresDate.getTime() - Date.now();
         setTimeout(() => AsyncStorage.removeItem("token"), delay);
-  
-        setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
       }
     };
-  
     checkLoginStatus();
   }, []);
 
   if (!isLoggedIn) {
     return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
   }
+  const queryClient = new QueryClient();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "home" : "home-outline"}
-              color={color}
-            />
-          ),
+    <QueryClientProvider client={queryClient}>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+          headerShown: false,
         }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: "Messages",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "chatbubble" : "chatbubble-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "person" : "person-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "home" : "home-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="messages"
+          options={{
+            title: "Messages",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "chatbubble" : "chatbubble-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "person" : "person-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+    </QueryClientProvider>
   );
 }

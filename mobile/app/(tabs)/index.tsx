@@ -9,149 +9,32 @@ import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
 import moment from "moment";
 import { ThemedButton } from "@/components/ThemedButton";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import postsService from "@/services/postsService";
+import { Post } from "@/types";
+import { useQuery } from 'react-query';
+import { AppState } from 'react-native';
+
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
-  const Posts = [
-    {
-      id: "1",
-      userName: "Jenny Doe",
-      userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      time: "01/06/2024 08:20",
-      post: "Hey there, this is my test for a post of my social app in React Native.",
-      postImg:
-        "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/Partidos-politicos-Mexico.jpg",
-      likes: [
-        {
-          id: "1",
-          userName: "John Doe",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-        {
-          id: "2",
-          userName: "Ken William",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-      ],
-      comments: [
-        {
-          id: "1",
-          userName: "John Doe",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-          commentText: "This is hilarious!",
-        },
-        {
-          id: "2",
-          userName: "Ken William",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-          commentText: "I know right?!",
-        },
-        {
-          id: "3",
-          userName: "Selina Paul",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
+  const fetchPosts = async () => {
+    const response = await postsService.getAllPosts();
+    return response.data;
+  };
+  
+  const { data: posts, error, isLoading } = useQuery('posts', fetchPosts);
+  
+  if (isLoading) {
+    return <ThemedText>Loading...</ThemedText>;
+  }
+  
+  if (error) {
+    return <ThemedText>An error has occurred: {(error as Error).message}</ThemedText>;
+  }
 
-          commentText: "Wow!",
-        },
-      ],
-    },
-    {
-      id: "2",
-      userName: "John Doe",
-      userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      time: "01/06/2024 8:20",
-      post: "Hey there, this is my test for a post of my social app in React Native.",
-      postImg: "none",
-      likes: [
-        {
-          id: "1",
-          userName: "John Doe",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-        {
-          id: "2",
-          userName: "Ken William",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-      ],
-      comments: [],
-    },
-    {
-      id: "3",
-      userName: "Ken William",
-      userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      time: "01/06/2024 8:20",
-      post: "Hey there, this is my test for a post of my social app in React Native.",
-      postImg:
-        "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/FVT7HYTJF2SVT0C.webp",
-      likes: [
-        {
-          id: "1",
-          userName: "John Doe",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-        {
-          id: "2",
-          userName: "Ken William",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-      ],
-      comments: [],
-    },
-    {
-      id: "4",
-      userName: "Selina Paul",
-      userImg: "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      time: "01/06/2024 8:20",
-      post: "Hey there, this is my test for a post of my social app in React Native.",
-      postImg:
-        "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/unnamed.png",
-      likes: [
-        {
-          id: "1",
-          userName: "John Doe",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-        {
-          id: "2",
-          userName: "Ken William",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        },
-      ],
-      comments: [
-        {
-          id: "1",
-          userName: "Ken William",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-
-          commentText: "This is hilarious!",
-        },
-        {
-          id: "2",
-          userName: "Jenny Doe",
-          avatarUrl:
-            "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-
-          commentText: "I know right?!",
-        },
-      ],
-    },
-  ];
   const handlePressLikesModal = (content: any) => {
     setModalContent(content);
     setModalVisible(true);
@@ -170,9 +53,7 @@ export default function HomeScreen() {
             style={{ width: 50, height: 50 }}
             source={require("@/assets/images/tesjohub-logo.png")}
           />
-          <ThemedButton
-            onPress={() => alert("Create Post")}
-          >
+          <ThemedButton onPress={() => alert("Create Post")}>
             <TabBarIcon name="add-circle" />
           </ThemedButton>
         </ThemedView>
@@ -190,52 +71,56 @@ export default function HomeScreen() {
         setModalVisible={setCommentsModalVisible}
       />
       <ThemedView>
-        {Posts.map((item, index) => (
-          <ThemedView isBordered key={index} style={styles.postContainer}>
-            <ThemedView style={styles.postHeader}>
-              <ThemedView style={styles.userInfo}>
-                <Image style={styles.userImg} source={{ uri: item.userImg }} />
-                <ThemedView>
-                  <ThemedText style={styles.userName}>
-                    {item.userName}
-                  </ThemedText>
-                  <ThemedText style={styles.postTime}>
-                    {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
-                  </ThemedText>
+        {posts &&
+          posts?.map((item:Post, index:any) => (
+            <ThemedView isBordered key={index} style={styles.postContainer}>
+              <ThemedView style={styles.postHeader}>
+                <ThemedView style={styles.userInfo}>
+                  <Image
+                    style={styles.userImg}
+                    source={{ uri: item.user.avatarUrl?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s"}}
+                  />
+                  <ThemedView>
+                    <ThemedText style={styles.userName}>
+                      {item.user.username}
+                    </ThemedText>
+                    <ThemedText style={styles.postTime}>
+                      {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
+                    </ThemedText>
+                  </ThemedView>
                 </ThemedView>
+                <ThemedText>...</ThemedText>
               </ThemedView>
-              <ThemedText>...</ThemedText>
+              <ThemedText style={styles.post}>{item.postText}</ThemedText>
+              {item.postImg !== "none" ? (
+                <Image
+                  source={{ uri: item.postImg }}
+                  style={styles.postImg}
+                  resizeMode="cover"
+                />
+              ) : (
+                <ThemedView />
+              )}
+              <ThemedView style={styles.postFooter}>
+                <ThemedViewPressable
+                  style={styles.postFooter}
+                  onPress={() => handlePressLikesModal(item.likes)}
+                >
+                  <ThemedText style={styles.postLikes}>
+                    {item.likes.length} Likes
+                  </ThemedText>
+                </ThemedViewPressable>
+                <ThemedViewPressable
+                  style={styles.postFooter}
+                  onPress={() => handlePressCommentsModal(item.comments)}
+                >
+                  <ThemedText style={styles.postLikes}>
+                    {item.comments.length} comments
+                  </ThemedText>
+                </ThemedViewPressable>
+              </ThemedView>
             </ThemedView>
-            <ThemedText style={styles.post}>{item.post}</ThemedText>
-            {item.postImg !== "none" ? (
-              <Image
-                source={{ uri: item.postImg }}
-                style={styles.postImg}
-                resizeMode="cover"
-              />
-            ) : (
-              <ThemedView />
-            )}
-            <ThemedView style={styles.postFooter}>
-              <ThemedViewPressable
-                style={styles.postFooter}
-                onPress={() => handlePressLikesModal(item.likes)}
-              >
-                <ThemedText style={styles.postLikes}>
-                  {item.likes.length} Likes
-                </ThemedText>
-              </ThemedViewPressable>
-              <ThemedViewPressable
-                style={styles.postFooter}
-                onPress={() => handlePressCommentsModal(item.comments)}
-              >
-                <ThemedText style={styles.postLikes}>
-                  {item.comments.length} comments
-                </ThemedText>
-              </ThemedViewPressable>
-            </ThemedView>
-          </ThemedView>
-        ))}
+          ))}
       </ThemedView>
     </ParallaxScrollView>
   );
