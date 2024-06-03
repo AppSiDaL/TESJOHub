@@ -5,13 +5,11 @@ const mongoose = require('mongoose')
 const likeSchema = new mongoose.Schema({
   post: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post',
-    unique: true
+    ref: 'Post'
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    unique: true
+    ref: 'User'
   }
 })
 likeSchema.set('toJSON', {
