@@ -12,6 +12,7 @@ import postsService from "@/services/postsService";
 import { Post } from "@/types";
 import { useQuery } from 'react-query';
 import { useEffect, useCallback, useState } from 'react';
+import { defaultAvatar } from "@/constants";
 
 
 export default function HomeScreen() {
@@ -77,7 +78,7 @@ export default function HomeScreen() {
                 <ThemedView style={styles.userInfo}>
                   <Image
                     style={styles.userImg}
-                    source={{ uri: item.user.avatarUrl?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s"}}
+                    source={{ uri: item.user.avatarUrl?? defaultAvatar}}
                   />
                   <ThemedView>
                     <ThemedText style={styles.userName}>

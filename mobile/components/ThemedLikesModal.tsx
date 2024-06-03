@@ -15,6 +15,7 @@ import { ThemedText } from "./ThemedText";
 import { ThemedButton } from "./ThemedButton";
 import { TabBarIcon } from "./navigation/TabBarIcon";
 import { Like } from "@/types";
+import { defaultAvatar } from "@/constants";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
@@ -64,7 +65,7 @@ export function ThemedLikesModal({
                   source={{
                     uri:
                       item.user.avatarUrl ??
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s",
+                      defaultAvatar
                   }}
                 />
                 <ThemedText style={styles.modalText}>

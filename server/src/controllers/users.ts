@@ -1,9 +1,19 @@
 import { type Request, type Response } from 'express'
+import { type CustonRequest } from '../types'
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const { User } = require('../models')
+const jwt = require('jsonwebtoken')
 
-usersRouter.get('/', async (_request: Request, response: Response) => {
+usersRouter.get('/', async (request: CustonRequest, response: Response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (decodedToken.id === undefined) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+  response.json(user)
+})
+usersRouter.get('/all', async (_request: Request, response: Response) => {
   const users = await User
     .find({}).populate('posts', { user: 0 })
 

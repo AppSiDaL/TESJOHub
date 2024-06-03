@@ -9,108 +9,35 @@ import { ThemedViewPressable } from "@/components/ThemedViewPressable";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
 import { useState } from "react";
+import postsService from "@/services/postsService";
+import { useQuery } from "react-query";
+import userService from "@/services/userService";
+import { Post, User } from "@/types";
+import { defaultAvatar } from "@/constants";
 export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
-  const data = {
-    name: "John Doe",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    email: "joh@gmail.com",
-    avatarImage:
-      "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-    coverImage:
-      "https://missionmeans.com/wp-content/uploads/2020/04/nexum-leadership-banner.jpg",
-    posts: [
-      {
-        id: "1",
-        userName: "Jenny Doe",
-        userImg:
-          "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        time: "01/06/2024 08:20",
-        post: "Hey there, this is my test for a post of my social app in React Native.",
-        postImg:
-          "https://media.publit.io/file/ZKyHDhnApWjkCODtX74IqkhrL52oOdJrMypbBaLZin09f42tuaA/Partidos-politicos-Mexico.jpg",
-        likes: [
-          {
-            id: "1",
-            userName: "John Doe",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-          },
-          {
-            id: "2",
-            userName: "Ken William",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-          },
-        ],
-        comments: [
-          {
-            id: "1",
-            userName: "John Doe",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-            commentText: "This is hilarious!",
-          },
-          {
-            id: "2",
-            userName: "Ken William",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-            commentText: "I know right?!",
-          },
-          {
-            id: "3",
-            userName: "Selina Paul",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-
-            commentText: "Wow!",
-          },
-        ],
-      },
-      {
-        id: "2",
-        userName: "John Doe",
-        userImg:
-          "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-        time: "01/06/2024 8:20",
-        post: "Hey there, this is my test for a post of my social app in React Native.",
-        postImg: "none",
-        likes: [
-          {
-            id: "1",
-            userName: "John Doe",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-          },
-          {
-            id: "2",
-            userName: "Ken William",
-            avatarUrl:
-              "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-          },
-        ],
-        comments: [],
-      },
-    ],
-    friends: [
-      {
-        id: "1",
-        userName: "John Doe",
-        avatarUrl:
-          "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      },
-      {
-        id: "2",
-        userName: "Ken William",
-        avatarUrl:
-          "https://avatars.githubusercontent.com/u/6820?s=400&u=3b7f6b2f",
-      },
-    ],
+  const fetchUser = async () => {
+  const response = await userService.getUserInfo();
+  return response.data;
+  }
+  const { data:user } = useQuery('user', fetchUser);
+  const fetchPosts = async () => {
+    const response = await postsService.getUserPosts();
+    return response.data;
   };
+  
+  const { data: posts, error, isLoading } = useQuery('posts', fetchPosts);
+  
+  if (isLoading) {
+    return <ThemedText>Loading...</ThemedText>;
+  }
+  
+  if (error) {
+    return <ThemedText>An error has occurred: {(error as Error).message}</ThemedText>;
+  }
   const handlePressLikesModal = (content: any) => {
     setModalContent(content);
     setModalVisible(true);
@@ -124,9 +51,9 @@ export default function ProfileScreen() {
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
         <ThemedView style={styles.headerContainer}>
-          <Image source={{ uri: data.coverImage }} style={styles.headerImage} />
+          <Image source={{ uri: user.coverImage }} style={styles.headerImage} />
           <Image
-            source={{ uri: data.avatarImage }}
+            source={{ uri: user.avatarImage }}
             style={styles.avatarImage}
           />
         </ThemedView>
@@ -144,29 +71,29 @@ export default function ProfileScreen() {
       />
       <ThemedView>
         <ThemedView style={styles.userData}>
-          <ThemedText type="title">{data.name}</ThemedText>
+          <ThemedText type="title">{user.name}</ThemedText>
           <ThemedView style={styles.friendsAvatars}>
-            {data.friends.slice(0, 3).map((item, index) => (
+            {user.friends.slice(0, 3).map((item:User, index:number) => (
               <Image
                 key={index}
-                source={{ uri: item.avatarUrl }}
+                source={{ uri: item.avatarUrl ?? "" }}
                 style={[styles.friendsImg, { left: index * 20 }]}
               />
             ))}
-            {data.friends.length > 3 && (
+            {user.friends.length > 3 && (
               <ThemedText style={{ marginLeft: 70 }}>...</ThemedText>
             )}
           </ThemedView>
         </ThemedView>
-        <ThemedText style={styles.bio}>{data.bio}</ThemedText>
+        <ThemedText style={styles.bio}>{user.bio}</ThemedText>
       </ThemedView>
-      {data.posts.map((item, index) => (
+      {posts.map((item:Post, index:number) => (
         <ThemedView isBordered key={index} style={styles.postContainer}>
           <ThemedView style={styles.postHeader}>
             <ThemedView style={styles.userPostInfo}>
-              <Image style={styles.userImg} source={{ uri: item.userImg }} />
+              <Image style={styles.userImg} source={{ uri: item.user.avatarUrl ?? defaultAvatar }} />
               <ThemedView>
-                <ThemedText style={styles.userName}>{item.userName}</ThemedText>
+                <ThemedText style={styles.userName}>{item.user.username}</ThemedText>
                 <ThemedText style={styles.postTime}>
                   {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
                 </ThemedText>
@@ -174,7 +101,7 @@ export default function ProfileScreen() {
             </ThemedView>
             <ThemedText>...</ThemedText>
           </ThemedView>
-          <ThemedText style={styles.post}>{item.post}</ThemedText>
+          <ThemedText style={styles.post}>{item.postText}</ThemedText>
           {item.postImg !== "none" ? (
             <Image
               source={{ uri: item.postImg }}

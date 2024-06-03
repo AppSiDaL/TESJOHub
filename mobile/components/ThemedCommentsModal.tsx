@@ -16,6 +16,7 @@ import { ThemedButton } from "./ThemedButton";
 import { TabBarIcon } from "./navigation/TabBarIcon";
 import { ThemedCard } from "./ThemedCard";
 import { Comment } from "@/types";
+import { defaultAvatar } from "@/constants";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
@@ -65,7 +66,7 @@ export function ThemedCommentsModal({
                   source={{
                     uri:
                       item.user.avatarUrl ??
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s",
+                      defaultAvatar
                   }}
                 />
                 <ThemedCard style={styles.card}>
