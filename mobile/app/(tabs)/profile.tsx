@@ -54,7 +54,7 @@ export default function ProfileScreen() {
         <ThemedView style={styles.headerContainer}>
           <Image source={{ uri: user.coverUrl??defaultCover }} style={styles.headerImage} />
           <Image
-            source={{ uri: user.avatarImage }}
+            source={{ uri: user.avatarImage??defaultAvatar }}
             style={styles.avatarImage}
           />
         </ThemedView>
