@@ -115,11 +115,11 @@ export default function ProfileScreen() {
           </ThemedView>
           <ThemedText style={styles.post}>{item.postText}</ThemedText>
           {item.postImg !== "none" ? (
-            <Image
-              source={{ uri: item.postImg }}
-              style={styles.postImg}
-              resizeMode="cover"
-            />
+                <Image
+                source={{ uri: item.postImg }}
+                style={styles.postImg}
+                resizeMode="cover"
+              />
           ) : (
             <ThemedView />
           )}
@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postImg: {
-    width: "100%",
-    height: 200,
+    width: '100%',
+    aspectRatio: 1, // Agrega esta línea
     borderRadius: 10,
     marginTop: 10,
   },

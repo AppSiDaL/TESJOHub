@@ -1,4 +1,4 @@
-import { Image, StyleSheet } from "react-native";
+import { Alert, Image, StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -10,10 +10,10 @@ import { ThemedButton } from "@/components/ThemedButton";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import postsService from "@/services/postsService";
 import { Post } from "@/types";
-import { useQuery } from 'react-query';
-import { useEffect, useCallback, useState } from 'react';
+import { useQuery } from "react-query";
+import { useEffect, useCallback, useState } from "react";
 import { defaultAvatar } from "@/constants";
-
+import likeService from "@/services/likeService";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,15 +24,31 @@ export default function HomeScreen() {
     const response = await postsService.getAllPosts();
     return response.data;
   };
-  
-  const { data: posts, error, isLoading } = useQuery('posts', fetchPosts);
-  
+
+  const {
+    data: posts,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery("posts", fetchPosts);
+
+  const likePost = async (id: string) => {
+    try {
+      await likeService.createItem(id);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      refetch();
+    }
+  };
   if (isLoading) {
     return <ThemedText>Loading...</ThemedText>;
   }
-  
+
   if (error) {
-    return <ThemedText>An error has occurred: {(error as Error).message}</ThemedText>;
+    return (
+      <ThemedText>An error has occurred: {(error as Error).message}</ThemedText>
+    );
   }
 
   const handlePressLikesModal = (content: any) => {
@@ -58,7 +74,6 @@ export default function HomeScreen() {
           </ThemedButton>
         </ThemedView>
         <ThemedText type="title">TESJoHUB</ThemedText>
-        <ThemedText>This is a social app made in React Native.</ThemedText>
       </ThemedView>
       <ThemedLikesModal
         modalVisible={modalVisible}
@@ -72,13 +87,13 @@ export default function HomeScreen() {
       />
       <ThemedView>
         {posts &&
-          posts?.map((item:Post, index:any) => (
+          posts?.map((item: Post, index: any) => (
             <ThemedView isBordered key={index} style={styles.postContainer}>
               <ThemedView style={styles.postHeader}>
                 <ThemedView style={styles.userInfo}>
                   <Image
                     style={styles.userImg}
-                    source={{ uri: item.user.avatarUrl?? defaultAvatar}}
+                    source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
                   />
                   <ThemedView>
                     <ThemedText style={styles.userName}>
@@ -106,6 +121,12 @@ export default function HomeScreen() {
                   style={styles.postFooter}
                   onPress={() => handlePressLikesModal(item.likes)}
                 >
+                  <TabBarIcon
+                    onPress={() => likePost(item.id)}
+                    name="heart"
+                    color="gray"
+                    style={{ marginRight: 5 }}
+                  />
                   <ThemedText style={styles.postLikes}>
                     {item.likes.length} Likes
                   </ThemedText>
@@ -114,6 +135,12 @@ export default function HomeScreen() {
                   style={styles.postFooter}
                   onPress={() => handlePressCommentsModal(item.comments)}
                 >
+                  <TabBarIcon
+                    name="chatbubble"
+                    color="gray"
+                    onPress={() => alert("comment")}
+                    style={{ marginRight: 5 }}
+                  />
                   <ThemedText style={styles.postLikes}>
                     {item.comments.length} comments
                   </ThemedText>
@@ -165,7 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postImg: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 1, // Agrega esta línea
     borderRadius: 10,
     marginTop: 10,
