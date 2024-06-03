@@ -77,9 +77,11 @@ likeRouter.post(
       post: post._id,
       user: user._id
     })
-    post.likes = post.likes.concat(user._id)
-    post.save()
     const likeSaved = await like.save()
+
+    post.likes = post.likes.concat(likeSaved._id)
+    await post.save()
+
     response.status(201).json(likeSaved)
   }
 )

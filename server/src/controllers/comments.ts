@@ -73,6 +73,7 @@ commentRouter.post(
     }
     const user = await User.findById(decodedToken.id)
     const post = await Post.findById(request.body.post)
+    console.log(post)
     const comment = new Comment({
       post: post._id,
       commentText: request.body.commentText,
