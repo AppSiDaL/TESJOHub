@@ -109,33 +109,33 @@ postRouter.post(
     const user = await User.findById(decodedToken.id)
 
     const file = request.file
-    if (file === null || file === undefined) {
-      return response.status(400).json({ error: 'No file provided' })
+    let uploadResponse
+    if (file !== undefined && file !== null) {
+      const fileBuffer = readFileSync(file.path as PathOrFileDescriptor)
+      const publitio = new PublitioAPI(
+        '669h9nrnmMLBlDRmR66v',
+        'inh3NVD6Wx3vjLTPVJAytHX6S4wj2RDa'
+      )
+
+      try {
+        uploadResponse = await publitio.uploadFile(fileBuffer, 'file', {
+          folder: 'mvMNDiMe'
+        })
+      } catch (error) {
+        response.status(500).json({ error: error.message })
+      } finally {
+        // Borra el archivo del servidor
+        unlinkSync(file.path)
+      }
     }
-    const fileBuffer = readFileSync(file.path as PathOrFileDescriptor)
+
     const data = JSON.parse(request.body.datos as string)
     const { time, postText } = data
-    const publitio = new PublitioAPI(
-      '669h9nrnmMLBlDRmR66v',
-      'inh3NVD6Wx3vjLTPVJAytHX6S4wj2RDa'
-    )
-    let uploadResponse
-
-    try {
-      uploadResponse = await publitio.uploadFile(fileBuffer, 'file', {
-        folder: 'mvMNDiMe'
-      })
-    } catch (error) {
-      response.status(500).json({ error: error.message })
-    } finally {
-      // Borra el archivo del servidor
-      unlinkSync(file.path)
-    }
     const post = new Post({
       user: user._id,
       time,
       postText,
-      postImg: uploadResponse.url_preview,
+      postImg: uploadResponse !== null || uploadResponse !== undefined ? uploadResponse.url_preview : null,
       likes: [],
       comments: []
     })

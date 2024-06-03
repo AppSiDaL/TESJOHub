@@ -134,7 +134,7 @@ export default function ProfileScreen() {
                       {item.user.username}
                     </ThemedText>
                     <ThemedText style={styles.postTime}>
-                      {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
+                    {moment(item.time).fromNow()} 
                     </ThemedText>
                   </ThemedView>
                 </ThemedView>

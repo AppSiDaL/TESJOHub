@@ -15,12 +15,14 @@ import { useEffect, useCallback, useState } from "react";
 import { defaultAvatar } from "@/constants";
 import likeService from "@/services/likeService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NewPostModal } from "@/components/newPostModal";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
+  const [newPostModalVisible, setNewPostModalVisible] = useState(false);
   const [user, setUser] = useState<String>("");
   const getUSer = async () => {
     const user = await AsyncStorage.getItem("userId");
@@ -71,6 +73,9 @@ export default function HomeScreen() {
     setCommentsModalContent(content);
     setCommentsModalVisible(true);
   };
+  const handlePressNewPostModal = () => {
+    setNewPostModalVisible(true);
+  }
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -81,8 +86,8 @@ export default function HomeScreen() {
             style={{ width: 50, height: 50 }}
             source={require("@/assets/images/tesjohub-logo.png")}
           />
-          <ThemedButton onPress={() => alert("Create Post")}>
-            <TabBarIcon name="add-circle" />
+          <ThemedButton onPress={() => handlePressNewPostModal()}>
+            <TabBarIcon name="add-circle"  />
           </ThemedButton>
         </ThemedView>
         <ThemedText type="title">TESJoHUB</ThemedText>
@@ -96,6 +101,11 @@ export default function HomeScreen() {
         modalVisible={commentsModalVisible}
         modalContent={commentsModalContent}
         setModalVisible={setCommentsModalVisible}
+      />
+      <NewPostModal
+      modalVisible={newPostModalVisible}
+      modalContent={[]}
+      setModalVisible={setNewPostModalVisible}
       />
       <ThemedView>
         {posts &&
@@ -112,7 +122,7 @@ export default function HomeScreen() {
                       {item.user.username}
                     </ThemedText>
                     <ThemedText style={styles.postTime}>
-                      {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
+                    {moment(item.time).fromNow()} 
                     </ThemedText>
                   </ThemedView>
                 </ThemedView>
