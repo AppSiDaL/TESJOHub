@@ -13,7 +13,7 @@ import postsService from "@/services/postsService";
 import { useQuery } from "react-query";
 import userService from "@/services/userService";
 import { Post, User } from "@/types";
-import { defaultAvatar } from "@/constants";
+import { defaultAvatar, defaultCover } from "@/constants";
 export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
@@ -21,6 +21,7 @@ export default function ProfileScreen() {
   const [commentsModalContent, setCommentsModalContent] = useState([]);
   const fetchUser = async () => {
   const response = await userService.getUserInfo();
+  console.log(response)
   return response.data;
   }
   const { data:user } = useQuery('user', fetchUser);
@@ -51,7 +52,7 @@ export default function ProfileScreen() {
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
         <ThemedView style={styles.headerContainer}>
-          <Image source={{ uri: user.coverImage }} style={styles.headerImage} />
+          <Image source={{ uri: user.coverUrl??defaultCover }} style={styles.headerImage} />
           <Image
             source={{ uri: user.avatarImage }}
             style={styles.avatarImage}

@@ -2,8 +2,9 @@ export interface User {
     username: string;
     name: string;
     lastName: string;
-    avatarUrl: string | null;
-    coverUrl: string | null;
+    email?: string;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
     id: string;
 }
 

@@ -32,6 +32,7 @@ usersRouter.post('/', async (request: Request, response: Response) => {
       username,
       name,
       lastName,
+      firends: [],
       email,
       passwordHash,
       avatarUrl: null,

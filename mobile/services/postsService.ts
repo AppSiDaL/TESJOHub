@@ -10,7 +10,10 @@ const setToken = (newToken: string): void => {
 };
 
 const getUserPosts = async (): Promise<any> => {
-  const request = await axios.get(url);
+  const config = {
+    headers: { Authorization: token },
+  };
+  const request = await axios.get(url,config);
   return request;
 };
 const getAllPosts = async (): Promise<any> => {

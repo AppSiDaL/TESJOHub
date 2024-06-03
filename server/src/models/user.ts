@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true
   },
+  friends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   name: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, select: false, unique: true },

@@ -10,6 +10,7 @@ const { userRouter } = require('./controllers')
 const { loginRouter } = require('./controllers')
 const { commentRouter } = require('./controllers')
 const { likesRouter } = require('./controllers')
+const { friendsRouter } = require('./controllers')
 const middleware = require('./middleware')
 
 app.use(cors())
@@ -36,6 +37,8 @@ app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/likes', likesRouter)
+app.use('/api/friends', friendsRouter)
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 

@@ -7,6 +7,8 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import LoginScreen from "../../components/LoginScreen";
 import { QueryClient, QueryClientProvider } from "react-query";
+import postsService from "@/services/postsService";
+import userService from "@/services/userService";
 
 export default function TabLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,7 +18,8 @@ export default function TabLayout() {
     const checkLoginStatus = async () => {
       const token = await AsyncStorage.getItem("token");
       const expiresIn = await AsyncStorage.getItem("expiresIn");
-
+      postsService.setToken((token as string))
+      userService.setToken((token as string))
       if (token && expiresIn) {
         setIsLoggedIn(true);
         const expiresDate = new Date(expiresIn);
