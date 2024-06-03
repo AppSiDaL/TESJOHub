@@ -35,7 +35,7 @@ loginRouter.post('/', async (request: CustonRequest, response: Response) => {
 
   response
     .status(200)
-    .send({ token, username: user.username, name: user.name, expiresIn: expirationDate.toISOString() })
+    .send({ token, userId: user.id, username: user.username, name: user.name, expiresIn: expirationDate.toISOString() })
 })
 
 module.exports = loginRouter

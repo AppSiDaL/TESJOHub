@@ -9,11 +9,11 @@ const setToken = (newToken: string): void => {
   token = `Bearer ${newToken}`;
 };
 
-const getUserInfo = async (): Promise<any> => {
+const getUserInfo = async (id:String): Promise<any> => {
   const config = {
     headers: { Authorization: token },
   };
-  const request = await axios.get(url, config);
+  const request = await axios.get(`${url}/${id}`, config);
   return request;
 };
 const getAllPosts = async (): Promise<any> => {

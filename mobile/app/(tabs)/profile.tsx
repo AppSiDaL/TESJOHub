@@ -13,13 +13,15 @@ import { useQuery } from "react-query";
 import userService from "@/services/userService";
 import { Post, User } from "@/types";
 import { defaultAvatar, defaultCover } from "@/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
   const fetchUser = async () => {
-    const response = await userService.getUserInfo();
+    const userId = await AsyncStorage.getItem("userId");
+    const response = await userService.getUserInfo(userId as string);
     console.log(response);
     return response.data;
   };

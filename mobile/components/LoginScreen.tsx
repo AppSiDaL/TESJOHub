@@ -23,6 +23,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       postsService.setToken((data.token as string))
       userService.setToken((data.token as string))
       await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("userId", data.userId);
       await AsyncStorage.setItem("expiresIn", data.expiresIn);
       onLogin();
     } catch (error) {
