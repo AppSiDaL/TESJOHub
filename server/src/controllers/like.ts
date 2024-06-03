@@ -8,7 +8,9 @@ const jwt = require('jsonwebtoken')
 const middleware = require('../middleware')
 
 likeRouter.get('/', async (_request: Request, response: Response) => {
-  const likes = await Like.find({}).populate('user', { posts: 0 }).populate('post', { likes: 0 })
+  const likes = await Like.find({})
+    .populate('user', { posts: 0 })
+    .populate('post', { likes: 0 })
   response.json(likes)
 })
 
@@ -75,9 +77,14 @@ likeRouter.post(
     const post = await Post.findById(request.body.post)
 
     // Check if the user has already liked the post
-    const existingLike = await Like.findOne({ post: post._id, user: user._id })
-    if (existingLike !== undefined) {
-      return response.status(400).json({ error: 'User has already liked this post' })
+    const existingLike = await Like.findOne({
+      post: request.body.post,
+      user: user._id
+    })
+    if (existingLike !== null && existingLike !== undefined) {
+      return response
+        .status(400)
+        .json({ error: 'User has already liked this post' })
     }
 
     const like = new Like({

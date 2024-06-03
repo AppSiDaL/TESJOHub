@@ -14,12 +14,24 @@ import { useQuery } from "react-query";
 import { useEffect, useCallback, useState } from "react";
 import { defaultAvatar } from "@/constants";
 import likeService from "@/services/likeService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
+  const [user, setUser] = useState<String>("");
+  const getUSer = async () => {
+    const user = await AsyncStorage.getItem("userId");
+    return user;
+  };
+  useEffect(() => {
+    getUSer().then((user) => {
+      setUser(user as string);
+    });
+  }, []);
+
   const fetchPosts = async () => {
     const response = await postsService.getAllPosts();
     return response.data;
@@ -121,12 +133,22 @@ export default function HomeScreen() {
                   style={styles.postFooter}
                   onPress={() => handlePressLikesModal(item.likes)}
                 >
-                  <TabBarIcon
-                    onPress={() => likePost(item.id)}
-                    name="heart"
-                    color="gray"
-                    style={{ marginRight: 5 }}
-                  />
+                  {item.likes.find(
+                    (like) => like.user.id.toString() === user.toString()
+                  ) ? (
+                    <TabBarIcon
+                      name="heart"
+                      color="red"
+                      style={{ marginRight: 5 }}
+                    />
+                  ) : (
+                    <TabBarIcon
+                      onPress={() => likePost(item.id)}
+                      name="heart"
+                      color="gray"
+                      style={{ marginRight: 5 }}
+                    />
+                  )}
                   <ThemedText style={styles.postLikes}>
                     {item.likes.length} Likes
                   </ThemedText>
