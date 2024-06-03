@@ -16,6 +16,7 @@ import { defaultAvatar } from "@/constants";
 import likeService from "@/services/likeService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NewPostModal } from "@/components/newPostModal";
+import { NewCommentModal } from "@/components/NewCommentModal";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,6 +24,7 @@ export default function HomeScreen() {
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
   const [newPostModalVisible, setNewPostModalVisible] = useState(false);
+  const [newCommentModalVisible, setNewCommentModalVisible] = useState(false);
   const [user, setUser] = useState<String>("");
   const getUSer = async () => {
     const user = await AsyncStorage.getItem("userId");
@@ -75,7 +77,11 @@ export default function HomeScreen() {
   };
   const handlePressNewPostModal = () => {
     setNewPostModalVisible(true);
-  }
+  };
+  const handlePressNewCommentModal = (post: String) => {
+    setModalContent([post as never]);
+    setNewCommentModalVisible(true);
+  };
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -87,7 +93,7 @@ export default function HomeScreen() {
             source={require("@/assets/images/tesjohub-logo.png")}
           />
           <ThemedButton onPress={() => handlePressNewPostModal()}>
-            <TabBarIcon name="add-circle"  />
+            <TabBarIcon name="add-circle" />
           </ThemedButton>
         </ThemedView>
         <ThemedText type="title">TESJoHUB</ThemedText>
@@ -103,10 +109,16 @@ export default function HomeScreen() {
         setModalVisible={setCommentsModalVisible}
       />
       <NewPostModal
-      modalVisible={newPostModalVisible}
-      modalContent={[]}
-      refresh={refetch}
-      setModalVisible={setNewPostModalVisible}
+        modalVisible={newPostModalVisible}
+        modalContent={[]}
+        refresh={refetch}
+        setModalVisible={setNewPostModalVisible}
+      />
+      <NewCommentModal
+        modalVisible={newCommentModalVisible}
+        modalContent={modalContent}
+        refresh={refetch}
+        setModalVisible={setNewCommentModalVisible}
       />
       <ThemedView>
         {posts &&
@@ -123,14 +135,14 @@ export default function HomeScreen() {
                       {item.user.username}
                     </ThemedText>
                     <ThemedText style={styles.postTime}>
-                    {moment(item.time).fromNow()} 
+                      {moment(item.time).fromNow()}
                     </ThemedText>
                   </ThemedView>
                 </ThemedView>
                 <ThemedText>...</ThemedText>
               </ThemedView>
               <ThemedText style={styles.post}>{item.postText}</ThemedText>
-              {item.postImg !== "none" ? (
+              {item.postImg !== null ? (
                 <Image
                   source={{ uri: item.postImg }}
                   style={styles.postImg}
@@ -171,7 +183,7 @@ export default function HomeScreen() {
                   <TabBarIcon
                     name="chatbubble"
                     color="gray"
-                    onPress={() => alert("comment")}
+                    onPress={() => handlePressNewCommentModal(item.id)}
                     style={{ marginRight: 5 }}
                   />
                   <ThemedText style={styles.postLikes}>

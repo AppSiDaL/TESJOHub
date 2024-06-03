@@ -17,6 +17,10 @@ import { TabBarIcon } from "./navigation/TabBarIcon";
 import { ThemedCard } from "./ThemedCard";
 import { Comment } from "@/types";
 import { defaultAvatar } from "@/constants";
+import { ThemedInputText } from "./ThemedInputText";
+import { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import commentService from "@/services/commentService";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
@@ -24,18 +28,36 @@ export type ThemedViewPropsPressable = ViewProps &
     darkColor?: string;
     modalVisible: boolean;
     modalContent: Comment[];
+    refresh: () => void;
     setModalVisible: (visible: boolean) => void;
   };
 
-export function ThemedCommentsModal({
+export function NewCommentModal({
   style,
   lightColor,
   darkColor,
   modalVisible,
   modalContent,
   setModalVisible,
+  refresh,
   ...otherProps
 }: ThemedViewPropsPressable) {
+  const [commentContent, setCommentContent] = useState("");
+
+  const handleUpload = async () => {
+    const data = {
+      post: modalContent[0],
+      commentText: commentContent,
+    };
+    try {
+      await commentService.createItem(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setModalVisible(!modalVisible);
+      refresh();
+    }
+  };
   return (
     <Modal
       animationType="slide"
@@ -48,37 +70,19 @@ export function ThemedCommentsModal({
       <ThemedView style={styles.centeredView}>
         <ThemedView style={styles.modalView}>
           <ThemedView style={styles.headerModal}>
-            <ThemedText style={styles.textStyle}>
-              {modalContent.length} Comments
-            </ThemedText>
+            <ThemedText style={styles.textStyle}>New Post</ThemedText>
             <Pressable onPress={() => setModalVisible(!modalVisible)}>
               <ThemedText style={styles.textStyle}>
                 <TabBarIcon name="close" />
               </ThemedText>
             </Pressable>
           </ThemedView>
-          <FlatList
-            data={modalContent}
-            renderItem={({ item }) => (
-              <ThemedView style={styles.commentView}>
-                <Image
-                  style={styles.userImg}
-                  source={{
-                    uri:
-                      item.user.avatarUrl ??
-                      defaultAvatar
-                  }}
-                />
-                <ThemedCard style={styles.card}>
-                  <ThemedText style={styles.commentUser}>
-                    {item.user.username}
-                  </ThemedText>
-                  <ThemedText>{item.commentText}</ThemedText>
-                </ThemedCard>
-              </ThemedView>
-            )}
-            keyExtractor={(item) => item.id}
+          <ThemedInputText
+            placeholder="Content"
+            value={commentContent}
+            onChangeText={(e) => setCommentContent(e)}
           />
+          <TabBarIcon name="add-circle" color="green" onPress={handleUpload} />
         </ThemedView>
       </ThemedView>
     </Modal>
@@ -86,7 +90,7 @@ export function ThemedCommentsModal({
 }
 
 const styles = StyleSheet.create({
-  card:{
+  card: {
     width: "85%",
   },
   commentView: {
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
-    height: "40%",
+    height: "50%",
     width: "80%",
     margin: 20,
     borderRadius: 20,

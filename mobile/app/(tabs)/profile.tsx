@@ -141,7 +141,7 @@ export default function ProfileScreen() {
                 <ThemedText>...</ThemedText>
               </ThemedView>
               <ThemedText style={styles.post}>{item.postText}</ThemedText>
-              {item.postImg !== "none" ? (
+              {item.postImg !== null ? (
                 <Image
                   source={{ uri: item.postImg }}
                   style={styles.postImg}

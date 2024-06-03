@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import postsService from "@/services/postsService";
 import userService from "@/services/userService";
 import likeService from "@/services/likeService";
+import commentService from "@/services/commentService";
 
 export default function TabLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,6 +23,7 @@ export default function TabLayout() {
       postsService.setToken((token as string))
       userService.setToken((token as string))
       likeService.setToken((token as string))
+      commentService.setToken((token as string))
       if (token && expiresIn) {
         setIsLoggedIn(true);
         const expiresDate = new Date(expiresIn);
