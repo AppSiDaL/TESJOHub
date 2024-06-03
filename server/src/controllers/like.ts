@@ -78,8 +78,8 @@ likeRouter.post(
 
     // Check if the user has already liked the post
     const existingLike = await Like.findOne({
-      post: request.body.post,
-      user: user._id
+      post: request.body.post.toString(),
+      user: user._id.toString()
     })
     if (existingLike !== null && existingLike !== undefined) {
       return response
