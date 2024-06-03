@@ -109,7 +109,7 @@ postRouter.post(
     const user = await User.findById(decodedToken.id)
 
     const file = request.file
-    let uploadResponse
+    let uploadResponse = null
     if (file !== undefined && file !== null) {
       const fileBuffer = readFileSync(file.path as PathOrFileDescriptor)
       const publitio = new PublitioAPI(
@@ -135,7 +135,7 @@ postRouter.post(
       user: user._id,
       time,
       postText,
-      postImg: uploadResponse !== null || uploadResponse !== undefined ? uploadResponse.url_preview : null,
+      postImg: uploadResponse !== null ? uploadResponse.url_preview : null,
       likes: [],
       comments: []
     })

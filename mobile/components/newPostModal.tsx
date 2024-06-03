@@ -28,6 +28,7 @@ export type ThemedViewPropsPressable = ViewProps &
     darkColor?: string;
     modalVisible: boolean;
     modalContent: Comment[];
+    refresh: () => void;
     setModalVisible: (visible: boolean) => void;
   };
 
@@ -38,6 +39,7 @@ export function NewPostModal({
   modalVisible,
   modalContent,
   setModalVisible,
+  refresh,
   ...otherProps
 }: ThemedViewPropsPressable) {
   const [postContent, setPostContent] = useState("");
@@ -76,6 +78,7 @@ export function NewPostModal({
       console.error(error);
     } finally {
       setModalVisible(!modalVisible);
+      refresh()
     }
   };
   return (

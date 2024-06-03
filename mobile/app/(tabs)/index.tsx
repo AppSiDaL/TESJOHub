@@ -105,6 +105,7 @@ export default function HomeScreen() {
       <NewPostModal
       modalVisible={newPostModalVisible}
       modalContent={[]}
+      refresh={refetch}
       setModalVisible={setNewPostModalVisible}
       />
       <ThemedView>
