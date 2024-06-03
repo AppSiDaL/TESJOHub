@@ -6,14 +6,15 @@ const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const middleware = require('../middleware')
 usersRouter.get(
-  '/',
+  '/:id',
   middleware.userExtractor,
   async (request: CustonRequest, response: Response) => {
+    const id = request.params.id
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (decodedToken.id === undefined) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    const user = await User.findById(decodedToken.id)
+    const user = await User.findById(id)
       .populate('posts', {
         user: 0
       })
@@ -21,7 +22,7 @@ usersRouter.get(
     response.json(user)
   }
 )
-usersRouter.get('/all', async (_request: Request, response: Response) => {
+usersRouter.get('/', async (_request: Request, response: Response) => {
   const users = await User.find({})
 
   response.json(users)
