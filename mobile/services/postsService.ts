@@ -13,11 +13,11 @@ const getUserPosts = async (): Promise<any> => {
   const config = {
     headers: { Authorization: token },
   };
-  const request = await axios.get(url,config);
+  const request = await axios.get(`${url}/userPosts`, config);
   return request;
 };
 const getAllPosts = async (): Promise<any> => {
-  const request = await axios.get(`${url}/all`);
+  const request = await axios.get(url);
   return request;
 };
 
