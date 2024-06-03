@@ -9,7 +9,8 @@ const likeSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    unique: true
   }
 })
 likeSchema.set('toJSON', {
