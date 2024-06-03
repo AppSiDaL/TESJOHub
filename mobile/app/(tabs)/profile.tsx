@@ -7,18 +7,30 @@ import moment from "moment";
 import { ThemedViewPressable } from "@/components/ThemedViewPressable";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import postsService from "@/services/postsService";
 import { useQuery } from "react-query";
 import userService from "@/services/userService";
 import { Post, User } from "@/types";
 import { defaultAvatar, defaultCover } from "@/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import likeService from "@/services/likeService";
 export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
+  const [userId, setUserId] = useState<String>("");
+  const getUSer = async () => {
+    const user = await AsyncStorage.getItem("userId");
+    return user;
+  };
+  useEffect(() => {
+    getUSer().then((user) => {
+      setUserId(user as string);
+    });
+  }, []);
   const fetchUser = async () => {
     const userId = await AsyncStorage.getItem("userId");
     const response = await userService.getUserInfo(userId as string);
@@ -31,8 +43,12 @@ export default function ProfileScreen() {
     return response.data;
   };
 
-  const { data: posts, error, isLoading } = useQuery("posts", fetchPosts);
-
+  const {
+    data: posts,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery("posts", fetchPosts);
   if (isLoading) {
     return <ThemedText>Loading...</ThemedText>;
   }
@@ -49,6 +65,16 @@ export default function ProfileScreen() {
   const handlePressCommentsModal = (content: any) => {
     setCommentsModalContent(content);
     setCommentsModalVisible(true);
+  };
+
+  const likePost = async (id: string) => {
+    try {
+      await likeService.createItem(id);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      refetch();
+    }
   };
   return (
     <ParallaxScrollView
@@ -94,55 +120,78 @@ export default function ProfileScreen() {
         </ThemedView>
         <ThemedText style={styles.bio}>{user.bio}</ThemedText>
       </ThemedView>
-      {posts.map((item: Post, index: number) => (
-        <ThemedView isBordered key={index} style={styles.postContainer}>
-          <ThemedView style={styles.postHeader}>
-            <ThemedView style={styles.userPostInfo}>
-              <Image
-                style={styles.userImg}
-                source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
-              />
-              <ThemedView>
-                <ThemedText style={styles.userName}>
-                  {item.user.username}
-                </ThemedText>
-                <ThemedText style={styles.postTime}>
-                  {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
-                </ThemedText>
+      {posts &&
+          posts?.map((item: Post, index: any) => (
+            <ThemedView isBordered key={index} style={styles.postContainer}>
+              <ThemedView style={styles.postHeader}>
+                <ThemedView style={styles.userPostInfo}>
+                  <Image
+                    style={styles.userImg}
+                    source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
+                  />
+                  <ThemedView>
+                    <ThemedText style={styles.userName}>
+                      {item.user.username}
+                    </ThemedText>
+                    <ThemedText style={styles.postTime}>
+                      {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
+                    </ThemedText>
+                  </ThemedView>
+                </ThemedView>
+                <ThemedText>...</ThemedText>
+              </ThemedView>
+              <ThemedText style={styles.post}>{item.postText}</ThemedText>
+              {item.postImg !== "none" ? (
+                <Image
+                  source={{ uri: item.postImg }}
+                  style={styles.postImg}
+                  resizeMode="cover"
+                />
+              ) : (
+                <ThemedView />
+              )}
+              <ThemedView style={styles.postFooter}>
+                <ThemedViewPressable
+                  style={styles.postFooter}
+                  onPress={() => handlePressLikesModal(item.likes)}
+                >
+                  {item.likes.find(
+                    (like) => like.user.id.toString() === userId.toString()
+                  ) ? (
+                    <TabBarIcon
+                      name="heart"
+                      color="red"
+                      style={{ marginRight: 5 }}
+                    />
+                  ) : (
+                    <TabBarIcon
+                      onPress={() => likePost(item.id)}
+                      name="heart"
+                      color="gray"
+                      style={{ marginRight: 5 }}
+                    />
+                  )}
+                  <ThemedText style={styles.postLikes}>
+                    {item.likes.length} Likes
+                  </ThemedText>
+                </ThemedViewPressable>
+                <ThemedViewPressable
+                  style={styles.postFooter}
+                  onPress={() => handlePressCommentsModal(item.comments)}
+                >
+                  <TabBarIcon
+                    name="chatbubble"
+                    color="gray"
+                    onPress={() => alert("comment")}
+                    style={{ marginRight: 5 }}
+                  />
+                  <ThemedText style={styles.postLikes}>
+                    {item.comments.length} comments
+                  </ThemedText>
+                </ThemedViewPressable>
               </ThemedView>
             </ThemedView>
-            <ThemedText>...</ThemedText>
-          </ThemedView>
-          <ThemedText style={styles.post}>{item.postText}</ThemedText>
-          {item.postImg !== "none" ? (
-                <Image
-                source={{ uri: item.postImg }}
-                style={styles.postImg}
-                resizeMode="cover"
-              />
-          ) : (
-            <ThemedView />
-          )}
-          <ThemedView style={styles.postFooter}>
-            <ThemedViewPressable
-              style={styles.postFooter}
-              onPress={() => handlePressLikesModal(item.likes)}
-            >
-              <ThemedText style={styles.postLikes}>
-                {item.likes.length} Likes
-              </ThemedText>
-            </ThemedViewPressable>
-            <ThemedViewPressable
-              style={styles.postFooter}
-              onPress={() => handlePressCommentsModal(item.comments)}
-            >
-              <ThemedText style={styles.postLikes}>
-                {item.comments.length} comments
-              </ThemedText>
-            </ThemedViewPressable>
-          </ThemedView>
-        </ThemedView>
-      ))}
+          ))}
     </ParallaxScrollView>
   );
 }
