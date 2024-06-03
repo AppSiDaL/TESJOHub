@@ -20,24 +20,26 @@ export default function ProfileScreen() {
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
   const fetchUser = async () => {
-  const response = await userService.getUserInfo();
-  console.log(response)
-  return response.data;
-  }
-  const { data:user } = useQuery('user', fetchUser);
+    const response = await userService.getUserInfo();
+    console.log(response);
+    return response.data;
+  };
+  const { data: user } = useQuery("user", fetchUser);
   const fetchPosts = async () => {
     const response = await postsService.getUserPosts();
     return response.data;
   };
-  
-  const { data: posts, error, isLoading } = useQuery('posts', fetchPosts);
-  
+
+  const { data: posts, error, isLoading } = useQuery("posts", fetchPosts);
+
   if (isLoading) {
     return <ThemedText>Loading...</ThemedText>;
   }
-  
+
   if (error) {
-    return <ThemedText>An error has occurred: {(error as Error).message}</ThemedText>;
+    return (
+      <ThemedText>An error has occurred: {(error as Error).message}</ThemedText>
+    );
   }
   const handlePressLikesModal = (content: any) => {
     setModalContent(content);
@@ -52,9 +54,12 @@ export default function ProfileScreen() {
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
         <ThemedView style={styles.headerContainer}>
-          <Image source={{ uri: user.coverUrl??defaultCover }} style={styles.headerImage} />
           <Image
-            source={{ uri: user.avatarImage??defaultAvatar }}
+            source={{ uri: user.coverUrl ?? defaultCover }}
+            style={styles.headerImage}
+          />
+          <Image
+            source={{ uri: user.avatarImage ?? defaultAvatar }}
             style={styles.avatarImage}
           />
         </ThemedView>
@@ -74,10 +79,10 @@ export default function ProfileScreen() {
         <ThemedView style={styles.userData}>
           <ThemedText type="title">{user.name}</ThemedText>
           <ThemedView style={styles.friendsAvatars}>
-            {user.friends.slice(0, 3).map((item:User, index:number) => (
+            {user.friends.slice(0, 3).map((item: User, index: number) => (
               <Image
                 key={index}
-                source={{ uri: item.avatarUrl ?? "" }}
+                source={{ uri: item.avatarUrl ?? defaultAvatar }}
                 style={[styles.friendsImg, { left: index * 20 }]}
               />
             ))}
@@ -88,13 +93,18 @@ export default function ProfileScreen() {
         </ThemedView>
         <ThemedText style={styles.bio}>{user.bio}</ThemedText>
       </ThemedView>
-      {posts.map((item:Post, index:number) => (
+      {posts.map((item: Post, index: number) => (
         <ThemedView isBordered key={index} style={styles.postContainer}>
           <ThemedView style={styles.postHeader}>
             <ThemedView style={styles.userPostInfo}>
-              <Image style={styles.userImg} source={{ uri: item.user.avatarUrl ?? defaultAvatar }} />
+              <Image
+                style={styles.userImg}
+                source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
+              />
               <ThemedView>
-                <ThemedText style={styles.userName}>{item.user.username}</ThemedText>
+                <ThemedText style={styles.userName}>
+                  {item.user.username}
+                </ThemedText>
                 <ThemedText style={styles.postTime}>
                   {moment(item.time, "DD/MM/YYYY H:mm").fromNow()}
                 </ThemedText>
