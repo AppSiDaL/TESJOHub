@@ -73,6 +73,13 @@ likeRouter.post(
     }
     const user = await User.findById(decodedToken.id)
     const post = await Post.findById(request.body.post)
+
+    // Check if the user has already liked the post
+    const existingLike = await Like.findOne({ post: post._id, user: user._id })
+    if (existingLike !== undefined) {
+      return response.status(400).json({ error: 'User has already liked this post' })
+    }
+
     const like = new Like({
       post: post._id,
       user: user._id
