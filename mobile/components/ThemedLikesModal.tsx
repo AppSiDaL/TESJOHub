@@ -34,11 +34,6 @@ export function ThemedLikesModal({
   setModalVisible,
   ...otherProps
 }: ThemedViewPropsPressable) {
-  const backgroundColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    "background"
-  );
-  console.log(modalContent)
   return (
     <Modal
       animationType="slide"
@@ -51,10 +46,12 @@ export function ThemedLikesModal({
       <ThemedView style={styles.centeredView}>
         <ThemedView style={styles.modalView}>
           <ThemedView style={styles.headerModal}>
-            <ThemedText style={styles.textStyle}>{modalContent.length} Likes</ThemedText>
+            <ThemedText style={styles.textStyle}>
+              {modalContent.length} Likes
+            </ThemedText>
             <Pressable onPress={() => setModalVisible(!modalVisible)}>
               <ThemedText style={styles.textStyle}>
-              <TabBarIcon name="close" />
+                <TabBarIcon name="close" />
               </ThemedText>
             </Pressable>
           </ThemedView>
@@ -64,7 +61,11 @@ export function ThemedLikesModal({
               <ThemedView style={styles.likeView}>
                 <Image
                   style={styles.userImg}
-                  source={{ uri: item.user.avatarUrl?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s"}}
+                  source={{
+                    uri:
+                      item.user.avatarUrl ??
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s",
+                  }}
                 />
                 <ThemedText style={styles.modalText}>
                   {item.user.username}
@@ -80,7 +81,7 @@ export function ThemedLikesModal({
 }
 
 const styles = StyleSheet.create({
-  headerModal:{
+  headerModal: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,

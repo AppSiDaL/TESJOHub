@@ -75,13 +75,13 @@ commentRouter.post(
     const post = await Post.findById(request.body.post)
     console.log(post)
     const comment = new Comment({
-      post: post._id,
+      post: request.body.post,
       commentText: request.body.commentText,
       user: user._id
     })
+    const commentSaved = await comment.save()
     post.comments = post.comments.concat(comment._id)
     post.save()
-    const commentSaved = await comment.save()
     response.status(201).json(commentSaved)
   }
 )

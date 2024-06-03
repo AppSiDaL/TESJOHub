@@ -3,7 +3,6 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedViewPressable } from "@/components/ThemedViewPressable";
-import { useState } from "react";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
 import moment from "moment";
@@ -12,7 +11,7 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import postsService from "@/services/postsService";
 import { Post } from "@/types";
 import { useQuery } from 'react-query';
-import { AppState } from 'react-native';
+import { useEffect, useCallback, useState } from 'react';
 
 
 export default function HomeScreen() {
@@ -165,8 +164,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postImg: {
-    width: "100%",
-    height: 200,
+    width: '100%',
+    aspectRatio: 1, // Agrega esta línea
     borderRadius: 10,
     marginTop: 10,
   },

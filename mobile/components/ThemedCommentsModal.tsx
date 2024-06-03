@@ -15,13 +15,14 @@ import { ThemedText } from "./ThemedText";
 import { ThemedButton } from "./ThemedButton";
 import { TabBarIcon } from "./navigation/TabBarIcon";
 import { ThemedCard } from "./ThemedCard";
+import { Comment } from "@/types";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
     lightColor?: string;
     darkColor?: string;
     modalVisible: boolean;
-    modalContent: any[];
+    modalContent: Comment[];
     setModalVisible: (visible: boolean) => void;
   };
 
@@ -34,11 +35,6 @@ export function ThemedCommentsModal({
   setModalVisible,
   ...otherProps
 }: ThemedViewPropsPressable) {
-  const backgroundColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    "background"
-  );
-
   return (
     <Modal
       animationType="slide"
@@ -64,22 +60,23 @@ export function ThemedCommentsModal({
             data={modalContent}
             renderItem={({ item }) => (
               <ThemedView style={styles.commentView}>
-                  <Image
-                    style={styles.userImg}
-                    source={{ uri: item.avatarUrl }}
-                  />
-                  <ThemedCard >
-                    <ThemedText style={styles.commentUser}>
-                      {item.userName}
-                    </ThemedText>
-                    <ThemedText>
-                      {item.commentText}
-                    </ThemedText>
-                  </ThemedCard>
-
+                <Image
+                  style={styles.userImg}
+                  source={{
+                    uri:
+                      item.user.avatarUrl ??
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSKAYL6jLWu96azBLYuApNGc4mLX_oqgjJAg&s",
+                  }}
+                />
+                <ThemedCard style={styles.card}>
+                  <ThemedText style={styles.commentUser}>
+                    {item.user.username}
+                  </ThemedText>
+                  <ThemedText>{item.commentText}</ThemedText>
+                </ThemedCard>
               </ThemedView>
             )}
-            keyExtractor={(item) => item}
+            keyExtractor={(item) => item.id}
           />
         </ThemedView>
       </ThemedView>
@@ -88,7 +85,9 @@ export function ThemedCommentsModal({
 }
 
 const styles = StyleSheet.create({
-
+  card:{
+    width: "85%",
+  },
   commentView: {
     flexDirection: "row",
     justifyContent: "flex-start",
@@ -121,6 +120,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     height: "30%",
+    width: "80%",
     margin: 20,
     borderRadius: 20,
     padding: 35,
@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   commentUser: {
-    fontWeight:"600"
+    fontWeight: "600",
   },
 });
