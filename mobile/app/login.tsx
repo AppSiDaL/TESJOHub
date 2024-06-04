@@ -13,12 +13,12 @@ import userService from "@/services/userService";
 import likeService from "@/services/likeService";
 import commentService from "@/services/commentService";
 import friendService from "@/services/friendService";
-import { NewUSerModal } from "./CreateUser";
+import { NewUSerModal } from "../components/CreateUser";
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
-export default function LoginScreen({ onLogin }: LoginScreenProps) {
+export default function login({ onLogin }: LoginScreenProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);

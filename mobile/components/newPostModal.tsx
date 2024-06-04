@@ -79,6 +79,7 @@ export function NewPostModal({
     } catch (error) {
       console.error(error);
     } finally {
+      refresh();
       setModalVisible(!modalVisible);
     }
   };

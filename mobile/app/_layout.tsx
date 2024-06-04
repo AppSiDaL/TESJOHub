@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import LoginScreen from "../components/LoginScreen";
+import LoginScreen from "./login";
 import { QueryClient, QueryClientProvider } from "react-query";
 import postsService from "@/services/postsService";
 import userService from "@/services/userService";
@@ -29,17 +29,6 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-
-  
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -61,6 +50,15 @@ export default function RootLayout() {
     };
     checkLoginStatus();
   }, []);
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
 
   if (!isLoggedIn) {
     return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
@@ -79,6 +77,15 @@ export default function RootLayout() {
               title: "",
             }}
           />
+          <Stack.Screen
+            name="login"
+            options={{
+              headerShown:false,
+              headerBackTitle: "Back",
+              title: "",
+            }}
+          />
+
         </Stack>
       </ThemeProvider>
     </QueryClientProvider>

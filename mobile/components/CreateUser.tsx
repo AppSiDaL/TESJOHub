@@ -62,62 +62,69 @@ export function NewUSerModal({
     }
   };
   return (
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <ThemedView style={styles.centeredView}>
-          <ThemedView style={styles.modalView}>
-            <ScrollView>
-              <ThemedView style={styles.headerModal}>
-                <ThemedText style={styles.textStyle}>New User</ThemedText>
-                <Pressable onPress={() => setModalVisible(!modalVisible)}>
-                  <ThemedText style={styles.textStyle}>
-                    <TabBarIcon name="close" />
-                  </ThemedText>
-                </Pressable>
-              </ThemedView>
-              <ThemedInputText
-                placeholder="username"
-                value={username}
-                onChangeText={(e) => setUsername(e)}
-              />
-              <ThemedInputText
-                placeholder="name"
-                value={name}
-                onChangeText={(e) => setName(e)}
-              />
-              <ThemedInputText
-                placeholder="lastName"
-                value={lastName}
-                onChangeText={(e) => setLastName(e)}
-              />
-              <ThemedInputText
-                placeholder="email"
-                value={email}
-                onChangeText={(e) => setEmail(e)}
-              />
-              <ThemedInputText
-                placeholder="password"
-                textContentType="password"
-                secureTextEntry={true}
-                value={password}
-                onChangeText={(e) => setPassword(e)}
-              />
-              <TabBarIcon
-                name="person-add"
-                color="green"
-                onPress={handleUpload}
-              />
-            </ScrollView>
-          </ThemedView>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(!modalVisible);
+      }}
+    >
+      <ThemedView style={styles.centeredView}>
+        <ThemedView style={styles.modalView}>
+          <ScrollView>
+            <ThemedView style={styles.headerModal}>
+              <ThemedText style={styles.textStyle}>New User</ThemedText>
+              <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                <ThemedText style={styles.textStyle}>
+                  <TabBarIcon name="close" />
+                </ThemedText>
+              </Pressable>
+            </ThemedView>
+            <ThemedInputText
+              placeholder="Nombre de usuario"
+              autoCapitalize="none"
+              inputMode="text"
+              value={username}
+              onChangeText={(e) => setUsername(e)}
+            />
+            <ThemedInputText
+              placeholder="Nombre"
+              textContentType="name"
+              autoCapitalize="words"
+              value={name}
+              onChangeText={(e) => setName(e)}
+            />
+            <ThemedInputText
+              textContentType="familyName"
+              autoCapitalize="words"
+              placeholder="Apellido"
+              value={lastName}
+              onChangeText={(e) => setLastName(e)}
+            />
+            <ThemedInputText
+              placeholder="Correo electronico"
+              textContentType="emailAddress"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={(e) => setEmail(e)}
+            />
+            <ThemedInputText
+              placeholder="Contraseña"
+              textContentType="password"
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(e) => setPassword(e)}
+            />
+            <TabBarIcon
+              name="person-add"
+              color="green"
+              onPress={handleUpload}
+            />
+          </ScrollView>
         </ThemedView>
-      </Modal>
+      </ThemedView>
+    </Modal>
   );
 }
 

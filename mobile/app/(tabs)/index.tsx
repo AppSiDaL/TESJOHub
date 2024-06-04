@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NewPostModal } from "@/components/newPostModal";
 import { NewCommentModal } from "@/components/NewCommentModal";
 import { Link, useNavigation } from "expo-router";
-
+import PostProfilePicture from "../../components/PostProfilePicture";
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
@@ -27,7 +27,7 @@ export default function HomeScreen() {
   const [newPostModalVisible, setNewPostModalVisible] = useState(false);
   const [newCommentModalVisible, setNewCommentModalVisible] = useState(false);
   const [user, setUser] = useState<String>("");
-  
+
   const getUSer = async () => {
     const user = await AsyncStorage.getItem("userId");
     return user;
@@ -48,7 +48,6 @@ export default function HomeScreen() {
     isLoading,
     refetch,
   } = useQuery("posts", fetchPosts);
-
 
   const likePost = async (id: string) => {
     try {
@@ -84,12 +83,11 @@ export default function HomeScreen() {
     setModalContent([post as never]);
     setNewCommentModalVisible(true);
   };
-  const handlePressPicture = () => {};
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
     >
-      <ThemedView>
+      <ThemedView >
         <ThemedView style={styles.header}>
           <Image
             style={{ width: 50, height: 50 }}
@@ -129,14 +127,7 @@ export default function HomeScreen() {
             <ThemedView isBordered key={index} style={styles.postContainer}>
               <ThemedView style={styles.postHeader}>
                 <ThemedView style={styles.userInfo}>
-                  <Pressable onPress={handlePressPicture}>
-                    <Link  href={`/${item.user.id}`}>
-                      <Image
-                        style={styles.userImg}
-                        source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
-                      />
-                    </Link>
-                  </Pressable>
+                  <PostProfilePicture item={item} />
                   <ThemedView>
                     <ThemedText style={styles.userName}>
                       {item.user.username}
@@ -224,7 +215,6 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flexDirection: "row",
-    alignItems: "center",
   },
   userImg: {
     width: 50,

@@ -16,6 +16,9 @@ import { defaultAvatar, defaultCover } from "@/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
+import { router } from 'expo-router';
+
+
 export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
@@ -37,7 +40,7 @@ export default function ProfileScreen() {
     console.log(response);
     return response.data;
   };
-  const { data: user,isLoading:userLoading } = useQuery("user", fetchUser);
+  const { data: user, isLoading: userLoading } = useQuery("user", fetchUser);
   const fetchPosts = async () => {
     const response = await postsService.getUserPosts();
     return response.data;
@@ -49,7 +52,7 @@ export default function ProfileScreen() {
     isLoading,
     refetch,
   } = useQuery("userPosts", fetchPosts);
-  if(userLoading){
+  if (userLoading) {
     return <ThemedText>Loading...</ThemedText>;
   }
   if (isLoading) {
@@ -69,7 +72,6 @@ export default function ProfileScreen() {
     setCommentsModalContent(content);
     setCommentsModalVisible(true);
   };
-
   const likePost = async (id: string) => {
     try {
       await likeService.createItem(id);
@@ -80,7 +82,12 @@ export default function ProfileScreen() {
     }
   };
 
-  console.log(user)
+  const handleCloseSession = async () => {
+    await AsyncStorage.clear();
+    router.replace('/login');
+  };
+
+  console.log(user);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
@@ -109,7 +116,9 @@ export default function ProfileScreen() {
       />
       <ThemedView>
         <ThemedView style={styles.userData}>
-          <ThemedText type="title">{user.name} {user.lastName}</ThemedText>
+          <ThemedText type="title">
+            {user.name} {user.lastName}
+          </ThemedText>
           <ThemedView style={styles.friendsAvatars}>
             {user.followers.slice(0, 3).map((item: User, index: number) => (
               <Image
@@ -122,81 +131,86 @@ export default function ProfileScreen() {
               <ThemedText style={{ marginLeft: 70 }}>...</ThemedText>
             )}
           </ThemedView>
+          <TabBarIcon
+            name="close"
+            color="red"
+            onPress={() => handleCloseSession}
+          />
         </ThemedView>
         <ThemedText style={styles.bio}>{user.bio}</ThemedText>
       </ThemedView>
       {posts &&
-          posts?.map((item: Post, index: any) => (
-            <ThemedView isBordered key={index} style={styles.postContainer}>
-              <ThemedView style={styles.postHeader}>
-                <ThemedView style={styles.userPostInfo}>
-                  <Image
-                    style={styles.userImg}
-                    source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
-                  />
-                  <ThemedView>
-                    <ThemedText style={styles.userName}>
-                      {item.user.username}
-                    </ThemedText>
-                    <ThemedText style={styles.postTime}>
-                    {moment(item.time).fromNow()} 
-                    </ThemedText>
-                  </ThemedView>
-                </ThemedView>
-                <ThemedText>...</ThemedText>
-              </ThemedView>
-              <ThemedText style={styles.post}>{item.postText}</ThemedText>
-              {item.postImg !== null ? (
+        posts?.map((item: Post, index: any) => (
+          <ThemedView isBordered key={index} style={styles.postContainer}>
+            <ThemedView style={styles.postHeader}>
+              <ThemedView style={styles.userPostInfo}>
                 <Image
-                  source={{ uri: item.postImg }}
-                  style={styles.postImg}
-                  resizeMode="cover"
+                  style={styles.userImg}
+                  source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
                 />
-              ) : (
-                <ThemedView />
-              )}
-              <ThemedView style={styles.postFooter}>
-                <ThemedViewPressable
-                  style={styles.postFooter}
-                  onPress={() => handlePressLikesModal(item.likes)}
-                >
-                  {item.likes.find(
-                    (like) => like.user.id.toString() === userId.toString()
-                  ) ? (
-                    <TabBarIcon
-                      name="heart"
-                      color="red"
-                      style={{ marginRight: 5 }}
-                    />
-                  ) : (
-                    <TabBarIcon
-                      onPress={() => likePost(item.id)}
-                      name="heart"
-                      color="gray"
-                      style={{ marginRight: 5 }}
-                    />
-                  )}
-                  <ThemedText style={styles.postLikes}>
-                    {item.likes.length} Likes
+                <ThemedView>
+                  <ThemedText style={styles.userName}>
+                    {item.user.username}
                   </ThemedText>
-                </ThemedViewPressable>
-                <ThemedViewPressable
-                  style={styles.postFooter}
-                  onPress={() => handlePressCommentsModal(item.comments)}
-                >
+                  <ThemedText style={styles.postTime}>
+                    {moment(item.time).fromNow()}
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+              <ThemedText>...</ThemedText>
+            </ThemedView>
+            <ThemedText style={styles.post}>{item.postText}</ThemedText>
+            {item.postImg !== null ? (
+              <Image
+                source={{ uri: item.postImg }}
+                style={styles.postImg}
+                resizeMode="cover"
+              />
+            ) : (
+              <ThemedView />
+            )}
+            <ThemedView style={styles.postFooter}>
+              <ThemedViewPressable
+                style={styles.postFooter}
+                onPress={() => handlePressLikesModal(item.likes)}
+              >
+                {item.likes.find(
+                  (like) => like.user.id.toString() === userId.toString()
+                ) ? (
                   <TabBarIcon
-                    name="chatbubble"
-                    color="gray"
-                    onPress={() => alert("comment")}
+                    name="heart"
+                    color="red"
                     style={{ marginRight: 5 }}
                   />
-                  <ThemedText style={styles.postLikes}>
-                    {item.comments.length} comments
-                  </ThemedText>
-                </ThemedViewPressable>
-              </ThemedView>
+                ) : (
+                  <TabBarIcon
+                    onPress={() => likePost(item.id)}
+                    name="heart"
+                    color="gray"
+                    style={{ marginRight: 5 }}
+                  />
+                )}
+                <ThemedText style={styles.postLikes}>
+                  {item.likes.length} Likes
+                </ThemedText>
+              </ThemedViewPressable>
+              <ThemedViewPressable
+                style={styles.postFooter}
+                onPress={() => handlePressCommentsModal(item.comments)}
+              >
+                <TabBarIcon
+                  name="chatbubble"
+                  color="gray"
+                  onPress={() => alert("comment")}
+                  style={{ marginRight: 5 }}
+                />
+                <ThemedText style={styles.postLikes}>
+                  {item.comments.length} comments
+                </ThemedText>
+              </ThemedViewPressable>
             </ThemedView>
-          ))}
+          </ThemedView>
+        ))}
     </ParallaxScrollView>
   );
 }
@@ -273,7 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postImg: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 1, // Agrega esta línea
     borderRadius: 10,
     marginTop: 10,
