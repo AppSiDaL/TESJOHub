@@ -89,6 +89,7 @@ export default function ViewUser() {
       refetchUser();
     }
   };
+  
   const likePost = async (id: string) => {
     try {
       await likeService.createItem(id);
@@ -117,7 +118,7 @@ export default function ViewUser() {
         </ThemedView>
       }
     >
-      
+
       <ThemedLikesModal
         modalVisible={modalVisible}
         modalContent={modalContent}
