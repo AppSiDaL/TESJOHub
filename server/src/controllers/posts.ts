@@ -109,7 +109,6 @@ postRouter.post(
     const user = await User.findById(decodedToken.id)
 
     const file = request.file
-    console.log(file)
     let uploadResponse = null
     if (file !== undefined && file !== null) {
       const fileBuffer = readFileSync(file.path as PathOrFileDescriptor)

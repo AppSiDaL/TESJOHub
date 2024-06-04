@@ -60,7 +60,7 @@ export function NewPostModal({
 
   const handleUpload = async () => {
     const data = new FormData();
-      data.append("file", image as any);
+    data.append("file", { uri: image, type: "image/jpeg", name: "image.jpg" } as any);
     data.append(
       "datos",
       JSON.stringify({
@@ -69,13 +69,11 @@ export function NewPostModal({
       })
     );
     try {
-      console.log(data)
       await postsService.createItem(data);
     } catch (error) {
       console.error(error);
     } finally {
       setModalVisible(!modalVisible);
-      refresh()
     }
   };
   return (
