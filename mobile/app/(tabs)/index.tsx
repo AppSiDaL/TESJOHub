@@ -27,6 +27,7 @@ export default function HomeScreen() {
   const [newPostModalVisible, setNewPostModalVisible] = useState(false);
   const [newCommentModalVisible, setNewCommentModalVisible] = useState(false);
   const [user, setUser] = useState<String>("");
+  
   const getUSer = async () => {
     const user = await AsyncStorage.getItem("userId");
     return user;
@@ -41,13 +42,13 @@ export default function HomeScreen() {
     const response = await postsService.getAllPosts();
     return response.data;
   };
-
   const {
     data: posts,
     error,
     isLoading,
     refetch,
   } = useQuery("posts", fetchPosts);
+
 
   const likePost = async (id: string) => {
     try {
@@ -129,7 +130,7 @@ export default function HomeScreen() {
               <ThemedView style={styles.postHeader}>
                 <ThemedView style={styles.userInfo}>
                   <Pressable onPress={handlePressPicture}>
-                    <Link href={`/${item.user.id}`}>
+                    <Link  href={`/${item.user.id}`}>
                       <Image
                         style={styles.userImg}
                         source={{ uri: item.user.avatarUrl ?? defaultAvatar }}

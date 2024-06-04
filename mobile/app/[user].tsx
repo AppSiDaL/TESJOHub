@@ -97,7 +97,6 @@ export default function ViewUser() {
       refetch();
     }
   };
-  console.log(user.friends);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}

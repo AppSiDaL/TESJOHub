@@ -79,6 +79,7 @@ export default function ProfileScreen() {
       refetch();
     }
   };
+  console.log(user)
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}

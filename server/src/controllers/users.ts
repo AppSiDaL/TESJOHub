@@ -18,7 +18,7 @@ usersRouter.get(
       .populate('posts', {
         user: 0
       })
-      .populate('friends')
+      .populate('followers')
     response.json(user)
   }
 )

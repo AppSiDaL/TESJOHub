@@ -7,6 +7,7 @@ import {
   type ViewProps,
   StyleSheet,
   Image,
+  ScrollView,
 } from "react-native";
 
 import { ThemedView } from "./ThemedView";
@@ -17,6 +18,7 @@ import { ThemedInputText } from "./ThemedInputText";
 import { useState } from "react";
 import userService from "@/services/userService";
 import { ThemedButton } from "./ThemedButton";
+import ParallaxScrollView from "./ParallaxScrollView";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
@@ -60,55 +62,62 @@ export function NewUSerModal({
     }
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(!modalVisible);
-      }}
-    >
-      <ThemedView style={styles.centeredView}>
-        <ThemedView style={styles.modalView}>
-          <ThemedView style={styles.headerModal}>
-            <ThemedText style={styles.textStyle}>New User</ThemedText>
-            <Pressable onPress={() => setModalVisible(!modalVisible)}>
-              <ThemedText style={styles.textStyle}>
-                <TabBarIcon name="close" />
-              </ThemedText>
-            </Pressable>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ThemedView style={styles.centeredView}>
+          <ThemedView style={styles.modalView}>
+            <ScrollView>
+              <ThemedView style={styles.headerModal}>
+                <ThemedText style={styles.textStyle}>New User</ThemedText>
+                <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                  <ThemedText style={styles.textStyle}>
+                    <TabBarIcon name="close" />
+                  </ThemedText>
+                </Pressable>
+              </ThemedView>
+              <ThemedInputText
+                placeholder="username"
+                value={username}
+                onChangeText={(e) => setUsername(e)}
+              />
+              <ThemedInputText
+                placeholder="name"
+                value={name}
+                onChangeText={(e) => setName(e)}
+              />
+              <ThemedInputText
+                placeholder="lastName"
+                value={lastName}
+                onChangeText={(e) => setLastName(e)}
+              />
+              <ThemedInputText
+                placeholder="email"
+                value={email}
+                onChangeText={(e) => setEmail(e)}
+              />
+              <ThemedInputText
+                placeholder="password"
+                textContentType="password"
+                secureTextEntry={true}
+                value={password}
+                onChangeText={(e) => setPassword(e)}
+              />
+              <TabBarIcon
+                name="person-add"
+                color="green"
+                onPress={handleUpload}
+              />
+            </ScrollView>
           </ThemedView>
-          <ThemedInputText
-            placeholder="username"
-            value={username}
-            onChangeText={(e) => setUsername(e)}
-          />
-          <ThemedInputText
-            placeholder="name"
-            value={name}
-            onChangeText={(e) => setName(e)}
-          />
-          <ThemedInputText
-            placeholder="lastName"
-            value={lastName}
-            onChangeText={(e) => setLastName(e)}
-          />
-          <ThemedInputText
-            placeholder="email"
-            value={email}
-            onChangeText={(e) => setEmail(e)}
-          />
-          <ThemedInputText
-            placeholder="password"
-            textContentType="password"
-            secureTextEntry={true}
-            value={password}
-            onChangeText={(e) => setPassword(e)}
-          />
-          <TabBarIcon name="person-add" color="green" onPress={handleUpload} />
         </ThemedView>
-      </ThemedView>
-    </Modal>
+      </Modal>
   );
 }
 
@@ -137,6 +146,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   centeredView: {
+    overflow: "scroll",
     position: "absolute",
     top: 0,
     left: 0,

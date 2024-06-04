@@ -23,6 +23,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const queryClient = new QueryClient();
 
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -38,10 +39,6 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-  const queryClient = new QueryClient();
-  useEffect(() => {
-    queryClient.clear();
-  }, []);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
