@@ -37,7 +37,7 @@ app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/likes', likesRouter)
-app.use('/api/friends', followersRouter)
+app.use('/api/followers', followersRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
