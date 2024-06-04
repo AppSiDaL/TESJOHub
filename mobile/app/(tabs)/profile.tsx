@@ -79,6 +79,7 @@ export default function ProfileScreen() {
       refetch();
     }
   };
+
   console.log(user)
   return (
     <ParallaxScrollView
@@ -110,14 +111,14 @@ export default function ProfileScreen() {
         <ThemedView style={styles.userData}>
           <ThemedText type="title">{user.name} {user.lastName}</ThemedText>
           <ThemedView style={styles.friendsAvatars}>
-            {user.friends.slice(0, 3).map((item: User, index: number) => (
+            {user.followers.slice(0, 3).map((item: User, index: number) => (
               <Image
                 key={index}
                 source={{ uri: item.avatarUrl ?? defaultAvatar }}
                 style={[styles.friendsImg, { left: index * 20 }]}
               />
             ))}
-            {user.friends.length > 3 && (
+            {user.followers.length > 3 && (
               <ThemedText style={{ marginLeft: 70 }}>...</ThemedText>
             )}
           </ThemedView>

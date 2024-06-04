@@ -131,7 +131,7 @@ export default function ViewUser() {
             <ThemedText type="title">
               {user.name} {user.lastName}
             </ThemedText>
-            {user.friends.find(
+            {user.followers.find(
               (friend: any) => friend.toString() === userSaved.toString()
             ) ? (
               <TabBarIcon
@@ -149,14 +149,14 @@ export default function ViewUser() {
             )}
           </ThemedView>
           <ThemedView style={styles.friendsAvatars}>
-            {user.friends.slice(0, 3).map((item: User, index: number) => (
+            {user.followers.slice(0, 3).map((item: User, index: number) => (
               <Image
                 key={index}
                 source={{ uri: item.avatarUrl ?? defaultAvatar }}
                 style={[styles.friendsImg, { left: index * 20 }]}
               />
             ))}
-            {user.friends.length > 3 && (
+            {user.followers.length > 3 && (
               <ThemedText style={{ marginLeft: 70 }}>...</ThemedText>
             )}
           </ThemedView>
