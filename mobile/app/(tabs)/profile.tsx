@@ -7,7 +7,7 @@ import moment from "moment";
 import { ThemedViewPressable } from "@/components/ThemedViewPressable";
 import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import postsService from "@/services/postsService";
 import { useQuery } from "react-query";
 import userService from "@/services/userService";
@@ -17,9 +17,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
 import { router } from 'expo-router';
+import { AuthContext } from "@/hooks/AuthContext";
 
 
 export default function ProfileScreen() {
+  const { onLogout } = useContext(AuthContext);
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
@@ -82,11 +85,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleCloseSession = async () => {
-    await AsyncStorage.clear();
-    router.replace('login');
-  };
-
   console.log(user);
   return (
     <ParallaxScrollView
@@ -134,7 +132,7 @@ export default function ProfileScreen() {
           <TabBarIcon
             name="close"
             color="red"
-            onPress={() => handleCloseSession}
+            onPress={onLogout}
           />
         </ThemedView>
         <ThemedText style={styles.bio}>{user.bio}</ThemedText>

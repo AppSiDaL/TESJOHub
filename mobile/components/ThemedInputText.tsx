@@ -24,7 +24,7 @@ export function ThemedInputText({
     <TextInput
       style={[
         { color },
-        {textTransform:"lowercase",borderWidth: 1, borderRadius: 5, padding: 10, marginBottom: 10},
+        {borderWidth: 1, borderRadius: 5, padding: 10, marginBottom: 10},
         { borderColor },
         style,
       ]}

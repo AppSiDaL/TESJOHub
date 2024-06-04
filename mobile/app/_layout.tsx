@@ -23,6 +23,8 @@ SplashScreen.preventAutoHideAsync();
 
 import { useNavigation } from '@react-navigation/native';
 import { Button } from "react-native";
+import { ThemedButton } from "@/components/ThemedButton";
+import { AuthContext } from "@/hooks/AuthContext";
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -64,7 +66,7 @@ export default function RootLayout() {
   const logout = async () => {
     await AsyncStorage.clear();
     setIsLoggedIn(false);
-    navigation.navigate('login');
+    navigation.navigate('login' as never);
   }
 
   if (!loaded) {
@@ -77,6 +79,7 @@ export default function RootLayout() {
 
 
   return (
+    <AuthContext.Provider value={{ isLoggedIn, onLogout: logout, onLogin: () => setIsLoggedIn(true) }}>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
@@ -98,8 +101,8 @@ export default function RootLayout() {
             }}
           />
         </Stack>
-        <Button title="Logout" onPress={logout} />
       </ThemeProvider>
     </QueryClientProvider>
+    </AuthContext.Provider>
   );
 }

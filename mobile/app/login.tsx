@@ -14,6 +14,7 @@ import likeService from "@/services/likeService";
 import commentService from "@/services/commentService";
 import friendService from "@/services/friendService";
 import { NewUSerModal } from "../components/CreateUser";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 interface LoginScreenProps {
   onLogin: () => void;
 }
@@ -22,6 +23,8 @@ export default function login({ onLogin }: LoginScreenProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   const login = async () => {
     try {
       const data = await createLogin({ username, password });
@@ -72,25 +75,41 @@ export default function login({ onLogin }: LoginScreenProps) {
         <ThemedText type="subtitle">Usuario</ThemedText>
         <ThemedInputText
           placeholder="Usuario"
+          textContentType="username"
+          keyboardType="web-search"
+          autoCapitalize="none"
+          autoCorrect={false}
+          autoComplete="username"
           value={username}
           onChangeText={(e) => setUsername(e)}
         />
       </ThemedView>
       <ThemedView>
         <ThemedText type="subtitle">Contraseña</ThemedText>
-        <ThemedInputText
-          textContentType="password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(e) => setPassword(e)}
-          placeholder="Contraseña"
-        />
+        <ThemedView style={styles.passWordView}>
+          <ThemedInputText
+            style={{ flex: 1 }}
+            textContentType="password"
+            secureTextEntry={!passwordVisible}
+            value={password}
+            onChangeText={(e) => setPassword(e)}
+            placeholder="Contraseña"
+          />
+          <TabBarIcon
+            style={{ flex: 0.1 }}
+            name="eye"
+            color="gray"
+            onPress={() => setPasswordVisible(!passwordVisible)}
+          />
+        </ThemedView>
       </ThemedView>
       <ThemedView style={styles.button}>
         <ThemedButton type="subtitle" onPress={() => login()}>
           Iniciar Sesión
         </ThemedButton>
-        <ThemedButton onPress={()=>setModalVisible(!modalVisible)}>¿Aún no tienes cuenta?</ThemedButton>
+        <ThemedButton onPress={() => setModalVisible(!modalVisible)}>
+          ¿Aún no tienes cuenta?
+        </ThemedButton>
         <ThemedText>¿Olvidaste tu contraseña?</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
@@ -98,6 +117,10 @@ export default function login({ onLogin }: LoginScreenProps) {
 }
 
 const styles = StyleSheet.create({
+  passWordView: {
+    display: "flex",
+    flexDirection: "row",
+  },
   titleContainer: {
     flexDirection: "row",
     alignSelf: "center",
