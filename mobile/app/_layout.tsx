@@ -21,9 +21,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+import { useNavigation } from '@react-navigation/native';
+import { Button } from "react-native";
+
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const queryClient = new QueryClient();
+  const navigation = useNavigation();
 
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -50,11 +54,18 @@ export default function RootLayout() {
     };
     checkLoginStatus();
   }, []);
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  const logout = async () => {
+    await AsyncStorage.clear();
+    setIsLoggedIn(false);
+    navigation.navigate('login');
+  }
 
   if (!loaded) {
     return null;
@@ -63,6 +74,7 @@ export default function RootLayout() {
   if (!isLoggedIn) {
     return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
   }
+
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -85,8 +97,8 @@ export default function RootLayout() {
               title: "",
             }}
           />
-
         </Stack>
+        <Button title="Logout" onPress={logout} />
       </ThemeProvider>
     </QueryClientProvider>
   );

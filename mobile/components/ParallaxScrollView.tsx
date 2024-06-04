@@ -1,3 +1,4 @@
+// ParallaxScrollView.tsx
 import type { PropsWithChildren, ReactElement } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 import Animated, {
@@ -49,8 +50,8 @@ export default function ParallaxScrollView({
 
   return (
     <ThemedView style={styles.container}>
-      {headerImage ? (
-        <Animated.ScrollView  ref={scrollRef} scrollEventThrottle={16}>
+      <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
+        {headerImage && (
           <Animated.View
             style={[
               styles.header,
@@ -60,22 +61,15 @@ export default function ParallaxScrollView({
           >
             {headerImage}
           </Animated.View>
-          <ThemedView style={styles.content}>{children}</ThemedView>
-        </Animated.ScrollView>
-      ) : (
-        <SafeAreaView>
-          <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
-            <ThemedView style={styles.content}>{children}</ThemedView>
-          </Animated.ScrollView>
-        </SafeAreaView>
-      )}
+        )}
+        <ThemedView style={styles.content}>{children}</ThemedView>
+      </Animated.ScrollView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    overflow:"scroll",
     flex: 1,
   },
   header: {

@@ -84,7 +84,7 @@ export default function ProfileScreen() {
 
   const handleCloseSession = async () => {
     await AsyncStorage.clear();
-    router.replace('/login');
+    router.replace('login');
   };
 
   console.log(user);

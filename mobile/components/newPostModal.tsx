@@ -7,6 +7,7 @@ import {
   type ViewProps,
   StyleSheet,
   Image,
+  Platform,
 } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -62,8 +63,20 @@ export function NewPostModal({
     const data = new FormData();
 
     if (image) {
-      data.append("file", { uri: image, type: "image/jpeg", name: "image.jpg" } as any);
+      if (Platform.OS === "web") {
+        // Convert base64 image to blob
+        const response = await fetch(image);
+        const blob = await response.blob();
+        data.append("file", blob, "image.jpg");
+      } else {
+        data.append("file", {
+          uri: image,
+          type: "image/jpeg",
+          name: "image.jpg",
+        } as any);
+      }
     }
+
     data.append(
       "datos",
       JSON.stringify({
@@ -71,9 +84,7 @@ export function NewPostModal({
         postText: postContent,
       })
     );
-    
 
-    console.log(data)
     try {
       await postsService.createItem(data);
     } catch (error) {
@@ -117,8 +128,12 @@ export function NewPostModal({
               resizeMode="contain"
             />
           )}
-          
-          <TabBarIcon name="add-circle" color="green" onPress={()=>handleUpload()} />
+
+          <TabBarIcon
+            name="add-circle"
+            color="green"
+            onPress={() => handleUpload()}
+          />
         </ThemedView>
       </ThemedView>
     </Modal>
