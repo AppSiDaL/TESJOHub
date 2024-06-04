@@ -16,25 +16,38 @@ import { defaultAvatar, defaultCover } from "@/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
+import friendService from "@/services/friendService";
 export default function ViewUser() {
   const local = useLocalSearchParams();
-
+  const [userSaved, setUserSaved] = useState<String>("");
+  const getUSer = async () => {
+    const user = await AsyncStorage.getItem("userId");
+    return user;
+  };
+  useEffect(() => {
+    getUSer().then((user) => {
+      setUserSaved(user as string);
+    });
+  }, []);
   console.log("Local:", local.user);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
-  console.log("local",local.user)
+  console.log("local", local.user);
 
   const fetchUser = async () => {
     const response = await userService.getUserInfo(local.user as string);
     console.log(response);
     return response.data;
   };
-  
-  const { data: user,isLoading:isLoadingUser } = useQuery(`${local.user}`, fetchUser);
-  console.log(user)
+
+  const {
+    data: user,
+    isLoading: isLoadingUser,
+    refetch: refetchUser,
+  } = useQuery(`specificUser`, fetchUser);
   const fetchPosts = async () => {
     const response = await postsService.getAnyUserPosts(local.user as string);
     return response.data;
@@ -66,7 +79,15 @@ export default function ViewUser() {
     setCommentsModalContent(content);
     setCommentsModalVisible(true);
   };
-
+  const handleAddFriend = async (id: string) => {
+    try {
+      await friendService.createItem(id);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      refetchUser();
+    }
+  };
   const likePost = async (id: string) => {
     try {
       await likeService.createItem(id);
@@ -76,13 +97,16 @@ export default function ViewUser() {
       refetch();
     }
   };
+  console.log(user.friends);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
         <ThemedView style={styles.headerContainer}>
           <Image
-            source={{ uri: user.coverUrl !== null ? user.coverUrl : defaultCover}}
+            source={{
+              uri: user.coverUrl !== null ? user.coverUrl : defaultCover,
+            }}
             style={styles.headerImage}
           />
           <Image
@@ -104,7 +128,27 @@ export default function ViewUser() {
       />
       <ThemedView>
         <ThemedView style={styles.userData}>
-          <ThemedText type="title">{user.name}</ThemedText>
+          <ThemedView style={styles.userDataHeader}>
+            <ThemedText type="title">
+              {user.name} {user.lastName}
+            </ThemedText>
+            {user.friends.find(
+              (friend: any) => friend.toString() === userSaved.toString()
+            ) ? (
+              <TabBarIcon
+                name="add-circle"
+                color="blue"
+                style={{ marginRight: 5 }}
+              />
+            ) : (
+              <TabBarIcon
+                onPress={() => handleAddFriend(userSaved.toString())}
+                name="add-circle"
+                color="green"
+                style={{ marginRight: 5 }}
+              />
+            )}
+          </ThemedView>
           <ThemedView style={styles.friendsAvatars}>
             {user.friends.slice(0, 3).map((item: User, index: number) => (
               <Image
@@ -281,5 +325,8 @@ const styles = StyleSheet.create({
   },
   postLikes: {
     fontSize: 14,
+  },
+  userDataHeader: {
+    flexDirection: "row",
   },
 });

@@ -1,11 +1,11 @@
 import { type NextFunction, type Response } from 'express'
 import { type CustonRequest } from '../types'
-const likeRouter = require('express').Router()
+const friendRouter = require('express').Router()
 const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const middleware = require('../middleware')
 
-likeRouter.delete(
+friendRouter.delete(
   '/:id',
   middleware.userExtractor,
   async (request: CustonRequest, response: Response, _next: NextFunction) => {
@@ -26,7 +26,7 @@ likeRouter.delete(
   }
 )
 
-likeRouter.put(
+friendRouter.put(
   '/:id',
   async (request: CustonRequest, response: Response, _next: NextFunction) => {
     const body = request.body
@@ -44,7 +44,7 @@ likeRouter.put(
   }
 )
 
-likeRouter.post(
+friendRouter.post(
   '/',
   middleware.userExtractor,
   async (request: CustonRequest, response: Response, _next: NextFunction) => {
@@ -54,10 +54,20 @@ likeRouter.post(
     }
     const user = await User.findById(decodedToken.id)
 
+    // Check if the user is already a friend
+    const existingFriend = user.friends.find(
+      (friend: string) => friend.toString() === request.body.user
+    )
+    if (existingFriend !== null || existingFriend !== undefined) {
+      return response
+        .status(400)
+        .json({ error: 'This user is already a friend' })
+    }
+
     user.friends = user.friends.concat(request.body.user)
     const newfriend = await user.save()
 
     response.status(201).json(newfriend)
   }
 )
-module.exports = likeRouter
+module.exports = friendRouter

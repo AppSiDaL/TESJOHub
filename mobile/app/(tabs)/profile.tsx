@@ -107,7 +107,7 @@ export default function ProfileScreen() {
       />
       <ThemedView>
         <ThemedView style={styles.userData}>
-          <ThemedText type="title">{user.name}</ThemedText>
+          <ThemedText type="title">{user.name} {user.lastName}</ThemedText>
           <ThemedView style={styles.friendsAvatars}>
             {user.friends.slice(0, 3).map((item: User, index: number) => (
               <Image
@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   userData: {
-    flexDirection: "row",
     margin: -10,
+    gap: 20,
   },
   headerContainer: {
     position: "relative",

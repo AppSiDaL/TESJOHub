@@ -12,6 +12,7 @@ import postsService from "@/services/postsService";
 import userService from "@/services/userService";
 import likeService from "@/services/likeService";
 import commentService from "@/services/commentService";
+import friendService from "@/services/friendService";
 interface LoginScreenProps {
   onLogin: () => void;
 }
@@ -26,6 +27,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       userService.setToken((data.token as string))
       likeService.setToken((data.token as string))
       commentService.setToken((data.token as string))
+      friendService.setToken((data.token as string))
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("userId", data.userId);
       await AsyncStorage.setItem("expiresIn", data.expiresIn);
