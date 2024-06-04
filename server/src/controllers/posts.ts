@@ -107,7 +107,6 @@ postRouter.post(
       return response.status(401).json({ error: 'token invalid' })
     }
     const user = await User.findById(decodedToken.id)
-
     const file = request.file
     let uploadResponse = null
     if (file !== undefined && file !== null) {
@@ -132,7 +131,7 @@ postRouter.post(
     const data = JSON.parse(request.body.datos as string)
     const { time, postText } = data
     const post = new Post({
-      user: user._id,
+      user: user.id,
       time,
       postText,
       postImg: uploadResponse !== null ? uploadResponse.url_preview : null,
@@ -141,7 +140,6 @@ postRouter.post(
     })
     const postSaved = await post.save()
     user.posts = user.posts.concat(postSaved._id)
-    console.log(user)
     await user.save()
     response.status(201).json(postSaved)
   }

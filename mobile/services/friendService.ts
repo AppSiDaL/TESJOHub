@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "@/constants";
-const url = API_URL + "friends";
+const url = API_URL + "followers";
 
 let token: any = null;
 

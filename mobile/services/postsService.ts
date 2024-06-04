@@ -24,8 +24,7 @@ const getAllPosts = async (): Promise<any> => {
 const getAnyUserPosts = async (id: string): Promise<any> => {
   const request = await axios.get(`${url}/userPosts/${id}`);
   return request;
-
-}
+};
 
 const getItem = async (id: string): Promise<any> => {
   const request = await axios.get(`${url}/${id}`);
@@ -34,13 +33,17 @@ const getItem = async (id: string): Promise<any> => {
 
 const createItem = async (data: FormData): Promise<any> => {
   const config = {
-    headers: { 
+    headers: {
       Authorization: token,
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "multipart/form-data",
     },
   };
-  const request = await axios.post(url, data, config);
-  return request.data;
+  try {
+    const request = await axios.post(url, data, config);
+    return request.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const removeItem = async (item: Post): Promise<any> => {

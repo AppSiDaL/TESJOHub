@@ -68,7 +68,8 @@ export function NewPostModal({
         postText: postContent,
       })
     );
-
+    
+    console.log(data)
     try {
       await postsService.createItem(data);
     } catch (error) {

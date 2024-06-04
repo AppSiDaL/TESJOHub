@@ -79,8 +79,10 @@ export default function ViewUser() {
     setCommentsModalContent(content);
     setCommentsModalVisible(true);
   };
+  
   const handleAddFriend = async (id: string) => {
     try {
+
       await friendService.createItem(id);
     } catch (error) {
       console.error(error);
