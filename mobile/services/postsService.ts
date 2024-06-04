@@ -21,6 +21,12 @@ const getAllPosts = async (): Promise<any> => {
   return request;
 };
 
+const getAnyUserPosts = async (id: string): Promise<any> => {
+  const request = await axios.get(`${url}/userPosts/${id}`);
+  return request;
+
+}
+
 const getItem = async (id: string): Promise<any> => {
   const request = await axios.get(`${url}/${id}`);
   return request;
@@ -53,6 +59,7 @@ const updateItem = async (id: string, pieza: Post): Promise<any> => {
 };
 
 export default {
+  getAnyUserPosts,
   getUserPosts,
   getAllPosts,
   setToken,

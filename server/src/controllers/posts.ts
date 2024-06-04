@@ -146,4 +146,20 @@ postRouter.post(
     response.status(201).json(postSaved)
   }
 )
+
+postRouter.get('/userPosts/:id', async (request: CustonRequest, response: Response) => {
+  const id = request.params.id
+  const user = await User.findById(id)
+  const posts = await Post.find({ user: user._id })
+    .populate('user', { posts: 0 })
+    .populate({
+      path: 'comments',
+      populate: { path: 'user', select: '-posts' }
+    })
+    .populate({
+      path: 'likes',
+      populate: { path: 'user', select: '-posts' }
+    })
+  response.json(posts)
+})
 module.exports = postRouter

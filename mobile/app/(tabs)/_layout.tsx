@@ -20,10 +20,10 @@ export default function TabLayout() {
     const checkLoginStatus = async () => {
       const token = await AsyncStorage.getItem("token");
       const expiresIn = await AsyncStorage.getItem("expiresIn");
-      postsService.setToken((token as string))
-      userService.setToken((token as string))
-      likeService.setToken((token as string))
-      commentService.setToken((token as string))
+      postsService.setToken(token as string);
+      userService.setToken(token as string);
+      likeService.setToken(token as string);
+      commentService.setToken(token as string);
       if (token && expiresIn) {
         setIsLoggedIn(true);
         const expiresDate = new Date(expiresIn);
@@ -39,10 +39,8 @@ export default function TabLayout() {
   if (!isLoggedIn) {
     return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
   }
-  const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -86,6 +84,5 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </QueryClientProvider>
   );
 }

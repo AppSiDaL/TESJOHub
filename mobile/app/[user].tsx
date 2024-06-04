@@ -1,5 +1,5 @@
+import { useLocalSearchParams, useGlobalSearchParams, Link } from "expo-router";
 import { StyleSheet, Image, Platform, View } from "react-native";
-
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -9,37 +9,34 @@ import { ThemedLikesModal } from "@/components/ThemedLikesModal";
 import { ThemedCommentsModal } from "@/components/ThemedCommentsModal";
 import { useEffect, useState } from "react";
 import postsService from "@/services/postsService";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import userService from "@/services/userService";
 import { Post, User } from "@/types";
 import { defaultAvatar, defaultCover } from "@/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
-export default function ProfileScreen() {
+export default function ViewUser() {
+  const local = useLocalSearchParams();
+
+  console.log("Local:", local.user);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
-  const [userId, setUserId] = useState<String>("");
-  const getUSer = async () => {
-    const user = await AsyncStorage.getItem("userId");
-    return user;
-  };
-  useEffect(() => {
-    getUSer().then((user) => {
-      setUserId(user as string);
-    });
-  }, []);
+  console.log("local",local.user)
+
   const fetchUser = async () => {
-    const userId = await AsyncStorage.getItem("userId");
-    const response = await userService.getUserInfo(userId as string);
+    const response = await userService.getUserInfo(local.user as string);
     console.log(response);
     return response.data;
   };
-  const { data: user,isLoading:userLoading } = useQuery("user", fetchUser);
+  
+  const { data: user,isLoading:isLoadingUser } = useQuery(`${local.user}`, fetchUser);
+  console.log(user)
   const fetchPosts = async () => {
-    const response = await postsService.getUserPosts();
+    const response = await postsService.getAnyUserPosts(local.user as string);
     return response.data;
   };
 
@@ -48,8 +45,8 @@ export default function ProfileScreen() {
     error,
     isLoading,
     refetch,
-  } = useQuery("userPosts", fetchPosts);
-  if(userLoading){
+  } = useQuery(`${local.user}Posts`, fetchPosts);
+  if (isLoadingUser) {
     return <ThemedText>Loading...</ThemedText>;
   }
   if (isLoading) {
@@ -85,7 +82,7 @@ export default function ProfileScreen() {
       headerImage={
         <ThemedView style={styles.headerContainer}>
           <Image
-            source={{ uri: user.coverUrl ?? defaultCover }}
+            source={{ uri: user.coverUrl !== null ? user.coverUrl : defaultCover}}
             style={styles.headerImage}
           />
           <Image
@@ -124,77 +121,77 @@ export default function ProfileScreen() {
         <ThemedText style={styles.bio}>{user.bio}</ThemedText>
       </ThemedView>
       {posts &&
-          posts?.map((item: Post, index: any) => (
-            <ThemedView isBordered key={index} style={styles.postContainer}>
-              <ThemedView style={styles.postHeader}>
-                <ThemedView style={styles.userPostInfo}>
-                  <Image
-                    style={styles.userImg}
-                    source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
-                  />
-                  <ThemedView>
-                    <ThemedText style={styles.userName}>
-                      {item.user.username}
-                    </ThemedText>
-                    <ThemedText style={styles.postTime}>
-                    {moment(item.time).fromNow()} 
-                    </ThemedText>
-                  </ThemedView>
-                </ThemedView>
-                <ThemedText>...</ThemedText>
-              </ThemedView>
-              <ThemedText style={styles.post}>{item.postText}</ThemedText>
-              {item.postImg !== null ? (
+        posts?.map((item: Post, index: any) => (
+          <ThemedView isBordered key={index} style={styles.postContainer}>
+            <ThemedView style={styles.postHeader}>
+              <ThemedView style={styles.userPostInfo}>
                 <Image
-                  source={{ uri: item.postImg }}
-                  style={styles.postImg}
-                  resizeMode="cover"
+                  style={styles.userImg}
+                  source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
                 />
-              ) : (
-                <ThemedView />
-              )}
-              <ThemedView style={styles.postFooter}>
-                <ThemedViewPressable
-                  style={styles.postFooter}
-                  onPress={() => handlePressLikesModal(item.likes)}
-                >
-                  {item.likes.find(
-                    (like) => like.user.id.toString() === userId.toString()
-                  ) ? (
-                    <TabBarIcon
-                      name="heart"
-                      color="red"
-                      style={{ marginRight: 5 }}
-                    />
-                  ) : (
-                    <TabBarIcon
-                      onPress={() => likePost(item.id)}
-                      name="heart"
-                      color="gray"
-                      style={{ marginRight: 5 }}
-                    />
-                  )}
-                  <ThemedText style={styles.postLikes}>
-                    {item.likes.length} Likes
+                <ThemedView>
+                  <ThemedText style={styles.userName}>
+                    {item.user.username}
                   </ThemedText>
-                </ThemedViewPressable>
-                <ThemedViewPressable
-                  style={styles.postFooter}
-                  onPress={() => handlePressCommentsModal(item.comments)}
-                >
+                  <ThemedText style={styles.postTime}>
+                    {moment(item.time).fromNow()}
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+              <ThemedText>...</ThemedText>
+            </ThemedView>
+            <ThemedText style={styles.post}>{item.postText}</ThemedText>
+            {item.postImg !== null ? (
+              <Image
+                source={{ uri: item.postImg }}
+                style={styles.postImg}
+                resizeMode="cover"
+              />
+            ) : (
+              <ThemedView />
+            )}
+            <ThemedView style={styles.postFooter}>
+              <ThemedViewPressable
+                style={styles.postFooter}
+                onPress={() => handlePressLikesModal(item.likes)}
+              >
+                {item.likes.find(
+                  (like) => like.user.id.toString() === local.user?.toString()
+                ) ? (
                   <TabBarIcon
-                    name="chatbubble"
-                    color="gray"
-                    onPress={() => alert("comment")}
+                    name="heart"
+                    color="red"
                     style={{ marginRight: 5 }}
                   />
-                  <ThemedText style={styles.postLikes}>
-                    {item.comments.length} comments
-                  </ThemedText>
-                </ThemedViewPressable>
-              </ThemedView>
+                ) : (
+                  <TabBarIcon
+                    onPress={() => likePost(item.id)}
+                    name="heart"
+                    color="gray"
+                    style={{ marginRight: 5 }}
+                  />
+                )}
+                <ThemedText style={styles.postLikes}>
+                  {item.likes.length} Likes
+                </ThemedText>
+              </ThemedViewPressable>
+              <ThemedViewPressable
+                style={styles.postFooter}
+                onPress={() => handlePressCommentsModal(item.comments)}
+              >
+                <TabBarIcon
+                  name="chatbubble"
+                  color="gray"
+                  onPress={() => alert("comment")}
+                  style={{ marginRight: 5 }}
+                />
+                <ThemedText style={styles.postLikes}>
+                  {item.comments.length} comments
+                </ThemedText>
+              </ThemedViewPressable>
             </ThemedView>
-          ))}
+          </ThemedView>
+        ))}
     </ParallaxScrollView>
   );
 }
@@ -271,7 +268,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postImg: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 1, // Agrega esta línea
     borderRadius: 10,
     marginTop: 10,

@@ -30,13 +30,25 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
+  const queryClient = new QueryClient();
+  useEffect(() => {
+      queryClient.clear();
+  },[]);
   return (
+    <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
+          <Stack.Screen
+            name="[user]"
+            options={{
+              headerBackTitle: "Back",
+              title: "",
+            }}
+          />
         </Stack>
       </ThemeProvider>
+    </QueryClientProvider>
   );
 }

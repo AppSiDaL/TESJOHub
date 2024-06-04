@@ -1,4 +1,4 @@
-import { Alert, Image, StyleSheet } from "react-native";
+import { Alert, Image, Pressable, StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -17,6 +17,7 @@ import likeService from "@/services/likeService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NewPostModal } from "@/components/newPostModal";
 import { NewCommentModal } from "@/components/NewCommentModal";
+import { Link, useNavigation } from "expo-router";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -82,6 +83,7 @@ export default function HomeScreen() {
     setModalContent([post as never]);
     setNewCommentModalVisible(true);
   };
+  const handlePressPicture = () => {};
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -126,10 +128,14 @@ export default function HomeScreen() {
             <ThemedView isBordered key={index} style={styles.postContainer}>
               <ThemedView style={styles.postHeader}>
                 <ThemedView style={styles.userInfo}>
-                  <Image
-                    style={styles.userImg}
-                    source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
-                  />
+                  <Pressable onPress={handlePressPicture}>
+                    <Link href={`/${item.user.id}`}>
+                      <Image
+                        style={styles.userImg}
+                        source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
+                      />
+                    </Link>
+                  </Pressable>
                   <ThemedView>
                     <ThemedText style={styles.userName}>
                       {item.user.username}
