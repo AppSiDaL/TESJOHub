@@ -26,11 +26,9 @@ const getItem = async (id: string): Promise<any> => {
   return request;
 };
 
-const createItem = async (pieza: Post): Promise<any> => {
-  const config = {
-    headers: { Authorization: token },
-  };
-  const request = await axios.post(url, pieza, config);
+const createItem = async (data:any): Promise<any> => {
+
+  const request = await axios.post(url, data);
   return request.data;
 };
 

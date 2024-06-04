@@ -9,30 +9,26 @@ import {
   Image,
 } from "react-native";
 
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
-import { ThemedButton } from "./ThemedButton";
 import { TabBarIcon } from "./navigation/TabBarIcon";
-import { ThemedCard } from "./ThemedCard";
 import { Comment } from "@/types";
-import { defaultAvatar } from "@/constants";
 import { ThemedInputText } from "./ThemedInputText";
 import { useState } from "react";
-import * as ImagePicker from "expo-image-picker";
-import postsService from "@/services/postsService";
+import userService from "@/services/userService";
+import { ThemedButton } from "./ThemedButton";
 
 export type ThemedViewPropsPressable = ViewProps &
   PressableProps & {
     lightColor?: string;
     darkColor?: string;
     modalVisible: boolean;
-    modalContent: Comment[];
-    refresh: () => void;
+    modalContent?: Comment[];
+    refresh?: () => void;
     setModalVisible: (visible: boolean) => void;
   };
 
-export function NewPostModal({
+export function NewUSerModal({
   style,
   lightColor,
   darkColor,
@@ -42,40 +38,25 @@ export function NewPostModal({
   refresh,
   ...otherProps
 }: ThemedViewPropsPressable) {
-  const [postContent, setPostContent] = useState("");
-  const [image, setImage] = useState(null);
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri as any);
-    }
-  };
-
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const handleUpload = async () => {
-    const data = new FormData();
-      data.append("file", image as any);
-    data.append(
-      "datos",
-      JSON.stringify({
-        time: new Date().toISOString(),
-        postText: postContent,
-      })
-    );
+    const data = {
+      username,
+      name,
+      lastName,
+      email,
+      password,
+    };
     try {
-      console.log(data)
-      await postsService.createItem(data);
+      await userService.createItem(data);
     } catch (error) {
       console.error(error);
     } finally {
       setModalVisible(!modalVisible);
-      refresh()
     }
   };
   return (
@@ -90,7 +71,7 @@ export function NewPostModal({
       <ThemedView style={styles.centeredView}>
         <ThemedView style={styles.modalView}>
           <ThemedView style={styles.headerModal}>
-            <ThemedText style={styles.textStyle}>New Post</ThemedText>
+            <ThemedText style={styles.textStyle}>New User</ThemedText>
             <Pressable onPress={() => setModalVisible(!modalVisible)}>
               <ThemedText style={styles.textStyle}>
                 <TabBarIcon name="close" />
@@ -98,21 +79,33 @@ export function NewPostModal({
             </Pressable>
           </ThemedView>
           <ThemedInputText
-            placeholder="Content"
-            value={postContent}
-            onChangeText={(e) => setPostContent(e)}
+            placeholder="username"
+            value={username}
+            onChangeText={(e) => setUsername(e)}
           />
-          <ThemedButton onPress={pickImage}>
-            <ThemedText>Upload Image</ThemedText>
-          </ThemedButton>
-          {image && (
-            <Image
-              source={{ uri: image }}
-              style={{ width: 200, height: 200 }}
-              resizeMode="contain"
-            />
-          )}
-          <TabBarIcon name="add-circle" color="green" onPress={handleUpload} />
+          <ThemedInputText
+            placeholder="name"
+            value={name}
+            onChangeText={(e) => setName(e)}
+          />
+          <ThemedInputText
+            placeholder="lastName"
+            value={lastName}
+            onChangeText={(e) => setLastName(e)}
+          />
+          <ThemedInputText
+            placeholder="email"
+            value={email}
+            onChangeText={(e) => setEmail(e)}
+          />
+          <ThemedInputText
+            placeholder="password"
+            textContentType="password"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(e) => setPassword(e)}
+          />
+          <TabBarIcon name="person-add" color="green" onPress={handleUpload} />
         </ThemedView>
       </ThemedView>
     </Modal>

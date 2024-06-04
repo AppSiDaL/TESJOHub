@@ -13,6 +13,7 @@ import userService from "@/services/userService";
 import likeService from "@/services/likeService";
 import commentService from "@/services/commentService";
 import friendService from "@/services/friendService";
+import { NewUSerModal } from "./CreateUser";
 interface LoginScreenProps {
   onLogin: () => void;
 }
@@ -20,14 +21,15 @@ interface LoginScreenProps {
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const login = async () => {
     try {
       const data = await createLogin({ username, password });
-      postsService.setToken((data.token as string))
-      userService.setToken((data.token as string))
-      likeService.setToken((data.token as string))
-      commentService.setToken((data.token as string))
-      friendService.setToken((data.token as string))
+      postsService.setToken(data.token as string);
+      userService.setToken(data.token as string);
+      likeService.setToken(data.token as string);
+      commentService.setToken(data.token as string);
+      friendService.setToken(data.token as string);
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("userId", data.userId);
       await AsyncStorage.setItem("expiresIn", data.expiresIn);
@@ -50,11 +52,15 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
   useEffect(() => {
     getToken();
-  }, [])
+  }, []);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
     >
+      <NewUSerModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
       <Image
         source={require("@/assets/images/tesjohub-logo.png")}
         style={styles.tesjoHubLogo}
@@ -84,7 +90,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         <ThemedButton type="subtitle" onPress={() => login()}>
           Iniciar Sesión
         </ThemedButton>
-        <ThemedButton>¿Aún no tienes cuenta?</ThemedButton>
+        <ThemedButton onPress={()=>setModalVisible(!modalVisible)}>¿Aún no tienes cuenta?</ThemedButton>
         <ThemedText>¿Olvidaste tu contraseña?</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
