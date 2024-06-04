@@ -60,7 +60,10 @@ export function NewPostModal({
 
   const handleUpload = async () => {
     const data = new FormData();
-    data.append("file", { uri: image, type: "image/jpeg", name: "image.jpg" } as any);
+
+    if (image) {
+      data.append("file", { uri: image, type: "image/jpeg", name: "image.jpg" } as any);
+    }
     data.append(
       "datos",
       JSON.stringify({
@@ -69,6 +72,7 @@ export function NewPostModal({
       })
     );
     
+
     console.log(data)
     try {
       await postsService.createItem(data);
@@ -112,7 +116,8 @@ export function NewPostModal({
               resizeMode="contain"
             />
           )}
-          <TabBarIcon name="add-circle" color="green" onPress={handleUpload} />
+          
+          <TabBarIcon name="add-circle" color="green" onPress={()=>handleUpload()} />
         </ThemedView>
       </ThemedView>
     </Modal>

@@ -79,10 +79,9 @@ export default function ViewUser() {
     setCommentsModalContent(content);
     setCommentsModalVisible(true);
   };
-  
+
   const handleAddFriend = async (id: string) => {
     try {
-
       await friendService.createItem(id);
     } catch (error) {
       console.error(error);
@@ -99,6 +98,7 @@ export default function ViewUser() {
       refetch();
     }
   };
+  console.log(userSaved.toString() === local.user);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
@@ -117,6 +117,7 @@ export default function ViewUser() {
         </ThemedView>
       }
     >
+      
       <ThemedLikesModal
         modalVisible={modalVisible}
         modalContent={modalContent}
@@ -133,22 +134,23 @@ export default function ViewUser() {
             <ThemedText type="title">
               {user.name} {user.lastName}
             </ThemedText>
-            {user.followers.find(
-              (friend: any) => friend.toString() === userSaved.toString()
-            ) ? (
-              <TabBarIcon
-                name="add-circle"
-                color="blue"
-                style={{ marginRight: 5 }}
-              />
-            ) : (
-              <TabBarIcon
-                onPress={() => handleAddFriend(local.user as string)}
-                name="add-circle"
-                color="green"
-                style={{ marginRight: 5 }}
-              />
-            )}
+            {userSaved.toString() !== local.user &&
+              (user.followers.find(
+                (friend: any) => friend.toString() === userSaved.toString()
+              ) ? (
+                <TabBarIcon
+                  name="add-circle"
+                  color="blue"
+                  style={{ marginRight: 5 }}
+                />
+              ) : (
+                <TabBarIcon
+                  onPress={() => handleAddFriend(local.user as string)}
+                  name="add-circle"
+                  color="green"
+                  style={{ marginRight: 5 }}
+                />
+              ))}
           </ThemedView>
           <ThemedView style={styles.friendsAvatars}>
             {user.followers.slice(0, 3).map((item: User, index: number) => (

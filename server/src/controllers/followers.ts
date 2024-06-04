@@ -54,11 +54,11 @@ friendRouter.post(
     }
     const usertoAddFollower = await User.findById(request.body.user)
 
-    // Check if the user is already a friend
     const existingFollower = usertoAddFollower.followers.find(
       (friend: string) => friend.toString() === decodedToken.id
     )
-    if (existingFollower !== null || existingFollower !== undefined) {
+    console.log(existingFollower)
+    if (existingFollower !== undefined) {
       return response
         .status(400)
         .json({ error: 'This user is already a friend' })
