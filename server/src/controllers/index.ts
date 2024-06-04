@@ -3,10 +3,10 @@ const userRouter = require('./users')
 const loginRouter = require('./login')
 const commentRouter = require('./comments')
 const likesRouter = require('./like')
-const friendsRouter = require('./friend')
+const followersRouter = require('./followers')
 export {}
 module.exports = {
-  friendsRouter,
+  followersRouter,
   likesRouter,
   postRouter,
   userRouter,

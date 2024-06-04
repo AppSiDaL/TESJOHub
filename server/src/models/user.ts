@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true
   },
-  friends: [{
+  followers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],

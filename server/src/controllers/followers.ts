@@ -52,22 +52,24 @@ friendRouter.post(
     if (decodedToken.id === undefined) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    const user = await User.findById(decodedToken.id)
+    const usertoAddFollower = await User.findById(request.body.user)
 
     // Check if the user is already a friend
-    const existingFriend = user.friends.find(
-      (friend: string) => friend.toString() === request.body.user
+    const existingFollower = usertoAddFollower.followers.find(
+      (friend: string) => friend.toString() === decodedToken.id
     )
-    if (existingFriend !== null || existingFriend !== undefined) {
+    if (existingFollower !== null || existingFollower !== undefined) {
       return response
         .status(400)
         .json({ error: 'This user is already a friend' })
     }
 
-    user.friends = user.friends.concat(request.body.user)
-    const newfriend = await user.save()
+    usertoAddFollower.followers = usertoAddFollower.followers.concat(
+      decodedToken.id
+    )
+    const newFollower = await usertoAddFollower.save()
 
-    response.status(201).json(newfriend)
+    response.status(201).json(newFollower)
   }
 )
 module.exports = friendRouter

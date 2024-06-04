@@ -142,7 +142,7 @@ export default function ViewUser() {
               />
             ) : (
               <TabBarIcon
-                onPress={() => handleAddFriend(userSaved.toString())}
+                onPress={() => handleAddFriend(local.user as string)}
                 name="add-circle"
                 color="green"
                 style={{ marginRight: 5 }}
