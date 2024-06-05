@@ -18,7 +18,6 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
 import { router } from "expo-router";
 import { AuthContext } from "@/hooks/AuthContext";
-import { ChangePicture } from "@/components/ChangePicture";
 
 export default function ProfileScreen() {
   const { onLogout } = useContext(AuthContext);
@@ -115,18 +114,7 @@ export default function ProfileScreen() {
         </ThemedView>
       }
     >
-      <ChangePicture
-        modalVisible={changePictureModalVisible}
-        setModalVisible={setChangePictureModalVisible}
-        mode="cover"
-        refresh={refetchUser}
-      />
-      <ChangePicture
-        modalVisible={changePictureModalVisibleAvatar}
-        setModalVisible={setChangePictureModalVisibleAvatar}
-        mode="avatar"
-        refresh={refetchUser}
-      />
+
       <ThemedLikesModal
         modalVisible={modalVisible}
         modalContent={modalContent}
