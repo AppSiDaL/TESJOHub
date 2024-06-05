@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "@/hooks/AuthContext";
 
 export default function RootLayout() {
@@ -64,8 +64,8 @@ export default function RootLayout() {
   const logout = async () => {
     await AsyncStorage.clear();
     setIsLoggedIn(false);
-    navigation.navigate('login' as never);
-  }
+    navigation.navigate("login" as never);
+  };
 
   if (!loaded) {
     return null;
@@ -75,32 +75,46 @@ export default function RootLayout() {
     return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
   }
 
-
   return (
-    <AuthContext.Provider value={{ isLoggedIn, onLogout: logout, onLogin: () => setIsLoggedIn(true) }}>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen
-            name="[user]"
-            options={{
-              headerBackTitle: "Back",
-              title: "",
-            }}
-          />
-          <Stack.Screen
-            name="login"
-            options={{
-              headerShown:false,
-              headerBackTitle: "Back",
-              title: "",
-            }}
-          />
-        </Stack>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        onLogout: logout,
+        onLogin: () => setIsLoggedIn(true),
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen
+              name="user/[user]"
+              options={{
+                headerBackTitle: "Back",
+                title: "",
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                headerShown: false,
+                headerBackTitle: "Back",
+                title: "",
+              }}
+            />
+            <Stack.Screen
+              name="chat/[chat]"
+              options={{
+                headerBackTitle: "Back",
+                title: "",
+              }}
+            />
+          </Stack>
+        </ThemeProvider>
+      </QueryClientProvider>
     </AuthContext.Provider>
   );
 }

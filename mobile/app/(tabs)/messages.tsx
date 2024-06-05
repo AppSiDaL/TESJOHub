@@ -14,7 +14,7 @@ export default function Chat() {
 
 	useLayoutEffect(() => {
 		function fetchGroups() {
-			fetch(API_URL + "/chats")
+			fetch(API_URL + "chats")
 				.then((res) => res.json())
 				.then((data) => setRooms(data))
 				.catch((err) => console.error(err));

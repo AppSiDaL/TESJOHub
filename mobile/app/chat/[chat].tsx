@@ -10,24 +10,16 @@ import {
 import socket from "@/utils/socket";
 import MessageComponent from "@/components/MessageComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams } from "expo-router";
 
-export default function MessagesScreen({ route, navigation }) {
-  const [user, setUser] = useState("");
-  const { name, id } = route.params;
-
+export default function Page() {
+  const [user, setUser] = useState("gil");
+  const local = useLocalSearchParams();
+  console.log(local.chat)
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
 
-  const getUsername = async () => {
-    try {
-      const value = await AsyncStorage.getItem("username");
-      if (value !== null) {
-        setUser(value);
-      }
-    } catch (e) {
-      console.error("Error while loading username!");
-    }
-  };
+
 
   const handleNewMessage = () => {
     const hour =
@@ -43,7 +35,7 @@ export default function MessagesScreen({ route, navigation }) {
     if (user) {
       socket.emit("newMessage", {
         message,
-        room_id: id,
+        room_id: local.chat,
         user,
         timestamp: { hour, mins },
       });
@@ -51,9 +43,7 @@ export default function MessagesScreen({ route, navigation }) {
   };
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: name });
-    getUsername();
-    socket.emit("findRoom", id);
+    socket.emit("findRoom", local.chat);
     socket.on("foundRoom", (roomChats) => setChatMessages(roomChats));
   }, []);
 
@@ -75,7 +65,6 @@ export default function MessagesScreen({ route, navigation }) {
             renderItem={({ item }) => (
               <MessageComponent item={item} user={user} />
             )}
-            keyExtractor={(item) => item.id}
           />
         ) : (
           ""

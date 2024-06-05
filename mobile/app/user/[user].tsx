@@ -17,7 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
 import friendService from "@/services/friendService";
-export default function ViewUser() {
+export default function Page() {
   const local = useLocalSearchParams();
   const [userSaved, setUserSaved] = useState<String>("");
   const getUSer = async () => {

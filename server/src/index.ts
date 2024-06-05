@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { Server } from 'socket.io'
+import chatController from './controllers/chatController'
 
 const express = require('express')
 require('express-async-errors')
@@ -15,6 +16,7 @@ const { commentRouter } = require('./controllers')
 const { likesRouter } = require('./controllers')
 const { followersRouter } = require('./controllers')
 const { chatsRouter } = require('./controllers')
+
 const middleware = require('./middleware')
 const server = http.createServer(app)
 const io = new Server(server, {
@@ -23,7 +25,7 @@ const io = new Server(server, {
   }
 })
 
-require('./controllers/chats')(io)
+chatController(io)
 
 app.use(cors())
 app.use(express.json({ limit: '50mb' }))

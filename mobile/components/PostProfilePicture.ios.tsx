@@ -9,9 +9,8 @@ interface PostProfilePictureProps {
 }
 
 export default function PostProfilePicture({ item }: PostProfilePictureProps) {
-  // código específico de iOS
   return (
-    <Link href={`/${item.user.id}`}>
+    <Link href={`/user/${item.user.id}`}>
       <Image
         style={styles.userImg}
         source={{ uri: item.user.avatarUrl ?? defaultAvatar }}
