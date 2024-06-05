@@ -1,8 +1,14 @@
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import socket from "../utils/socket";
+import { ThemedView } from "./ThemedView";
+import { ThemedText } from "./ThemedText";
+import { ThemedInputText } from "./ThemedInputText";
 
-export default function ModalChat({ setVisible }) {
+interface ModalChatProps{
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export default function ModalChat({ setVisible }:ModalChatProps) {
   const closeModal = () => setVisible(false);
   const [groupName, setGroupName] = useState("");
 
@@ -11,25 +17,25 @@ export default function ModalChat({ setVisible }) {
     closeModal();
   };
   return (
-    <View style={styles.modalContainer}>
-      <Text style={styles.modalsubheading}>Enter your Group name</Text>
-      <TextInput
+    <ThemedView style={styles.modalContainer}>
+      <ThemedText style={styles.modalsubheading}>Enter your Group name</ThemedText>
+      <ThemedInputText
         style={styles.modalinput}
         placeholder="Group name"
         onChangeText={(value) => setGroupName(value)}
       />
-      <View style={styles.modalbuttonContainer}>
+      <ThemedView style={styles.modalbuttonContainer}>
         <Pressable style={styles.modalbutton} onPress={handleCreateRoom}>
-          <Text style={styles.modaltext}>CREATE</Text>
+          <ThemedText style={styles.modaltext}>CREATE</ThemedText>
         </Pressable>
         <Pressable
           style={[styles.modalbutton, { backgroundColor: "#E14D2A" }]}
           onPress={closeModal}
         >
-          <Text style={styles.modaltext}>CANCEL</Text>
+          <ThemedText style={styles.modaltext}>CANCEL</ThemedText>
         </Pressable>
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 }
 
@@ -40,7 +46,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   modaltext: {
-    color: "#fff",
   },
   modalContainer: {
     width: "100%",
@@ -48,9 +53,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     elevation: 1,
     height: 400,
-    backgroundColor: "#fff",
     position: "absolute",
-    bottom: 0,
+    bottom: -200,
     zIndex: 10,
     paddingVertical: 50,
     paddingHorizontal: 20,
@@ -72,6 +76,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
-    color: "#fff",
 },
 });

@@ -25,24 +25,27 @@ postRouter.get('/', async (_request: CustonRequest, response: Response) => {
   response.json(posts)
 })
 
-postRouter.get('/userPosts', async (request: CustonRequest, response: Response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (decodedToken.id === undefined) {
-    return response.status(401).json({ error: 'token invalid' })
+postRouter.get(
+  '/userPosts',
+  async (request: CustonRequest, response: Response) => {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (decodedToken.id === undefined) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+    const posts = await Post.find({ user: user._id })
+      .populate('user', { posts: 0 })
+      .populate({
+        path: 'comments',
+        populate: { path: 'user', select: '-posts' }
+      })
+      .populate({
+        path: 'likes',
+        populate: { path: 'user', select: '-posts' }
+      })
+    response.json(posts)
   }
-  const user = await User.findById(decodedToken.id)
-  const posts = await Post.find({ user: user._id })
-    .populate('user', { posts: 0 })
-    .populate({
-      path: 'comments',
-      populate: { path: 'user', select: '-posts' }
-    })
-    .populate({
-      path: 'likes',
-      populate: { path: 'user', select: '-posts' }
-    })
-  response.json(posts)
-})
+)
 
 postRouter.get(
   '/:id',
@@ -80,8 +83,11 @@ postRouter.delete(
 postRouter.put(
   '/:id',
   async (request: CustonRequest, response: Response, _next: NextFunction) => {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (decodedToken.id !== undefined) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
     const body = request.body
-
     const blog = {
       title: body.title,
       author: body.author,
@@ -145,19 +151,22 @@ postRouter.post(
   }
 )
 
-postRouter.get('/userPosts/:id', async (request: CustonRequest, response: Response) => {
-  const id = request.params.id
-  const user = await User.findById(id)
-  const posts = await Post.find({ user: user._id })
-    .populate('user', { posts: 0 })
-    .populate({
-      path: 'comments',
-      populate: { path: 'user', select: '-posts' }
-    })
-    .populate({
-      path: 'likes',
-      populate: { path: 'user', select: '-posts' }
-    })
-  response.json(posts)
-})
+postRouter.get(
+  '/userPosts/:id',
+  async (request: CustonRequest, response: Response) => {
+    const id = request.params.id
+    const user = await User.findById(id)
+    const posts = await Post.find({ user: user._id })
+      .populate('user', { posts: 0 })
+      .populate({
+        path: 'comments',
+        populate: { path: 'user', select: '-posts' }
+      })
+      .populate({
+        path: 'likes',
+        populate: { path: 'user', select: '-posts' }
+      })
+    response.json(posts)
+  }
+)
 module.exports = postRouter

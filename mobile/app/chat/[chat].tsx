@@ -10,6 +10,7 @@ import { useLocalSearchParams } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedInputText } from "@/components/ThemedInputText";
 import { ThemedText } from "@/components/ThemedText";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Page() {
   const [user, setUser] = useState("gil");
@@ -18,31 +19,43 @@ export default function Page() {
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
 
-  const handleNewMessage = () => {
-    const hour =
-      new Date().getHours() < 10
-        ? `0${new Date().getHours()}`
-        : `${new Date().getHours()}`;
+	const getUsername = async () => {
+		try {
+			const value = await AsyncStorage.getItem("userId");
+			if (value !== null) {
+				setUser(value);
+			}
+		} catch (e) {
+			console.error("Error while loading username!");
+		}
+	};
 
-    const mins =
-      new Date().getMinutes() < 10
-        ? `0${new Date().getMinutes()}`
-        : `${new Date().getMinutes()}`;
+	const handleNewMessage = () => {
+		const hour =
+			new Date().getHours() < 10
+				? `0${new Date().getHours()}`
+				: `${new Date().getHours()}`;
 
-    if (user) {
-      socket.emit("newMessage", {
-        message,
-        roomId: local.chat,
-        user,
-        timestamp: { hour, mins },
-      });
-    }
-  };
+		const mins =
+			new Date().getMinutes() < 10
+				? `0${new Date().getMinutes()}`
+				: `${new Date().getMinutes()}`;
 
-  useLayoutEffect(() => {
-    socket.emit("findRoom", local.chat);
-    socket.on("foundRoom", (roomChats: any) => setChatMessages(roomChats));
-  }, []);
+		if (user) {
+			socket.emit("newMessage", {
+				message,
+				roomId: local.chat,
+				user,
+				timestamp: { hour, mins },
+			});
+		}
+	};
+
+	useLayoutEffect(() => {
+		getUsername();
+		socket.emit("findRoom", local.chat);
+		socket.on("foundRoom", (roomChats) => setChatMessages(roomChats));
+	}, []);
 
   useEffect(() => {
     socket.on("foundRoom", (roomChats: any) => setChatMessages(roomChats));
