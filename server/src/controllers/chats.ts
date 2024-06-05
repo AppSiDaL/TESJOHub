@@ -42,7 +42,7 @@ module.exports = function (io: any) {
       console.log('🔥: A user disconnected')
     })
   })
-  chatRouter.get('/api', (_req: Request, res: Response) => {
+  chatRouter.get('/', (_req: Request, res: Response) => {
     res.json(chatRooms)
   })
 

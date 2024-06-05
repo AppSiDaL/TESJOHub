@@ -7,13 +7,14 @@ import { Feather } from "@expo/vector-icons";
 import Modal from "@/components/ModalChat";
 import ChatComponent from "@/components/ChatComponent";
 import socket from "@/utils/socket";
+import { API_URL } from "@/constants";
 export default function Chat() {
 	const [visible, setVisible] = useState(false);
 	const [rooms, setRooms] = useState([]);
 
 	useLayoutEffect(() => {
 		function fetchGroups() {
-			fetch("http://localhost:4000/api")
+			fetch(API_URL + "/chats")
 				.then((res) => res.json())
 				.then((data) => setRooms(data))
 				.catch((err) => console.error(err));
