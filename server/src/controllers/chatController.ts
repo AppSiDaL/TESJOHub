@@ -24,10 +24,10 @@ export default function (io: any): void {
     })
 
     socket.on('newMessage', (data: any) => {
-      const { room_id, message, user, timestamp } = data
-      const result = chatRooms.filter((room) => room.id === room_id)
+      const { roomId, message, user, timestamp } = data
+      const result = chatRooms.filter((room) => room.id === roomId)
       if (result.length === 0) {
-        console.log(`No room found with id ${room_id}`)
+        console.log(`No room found with id ${roomId}`)
         return
       }
       const newMessage = {

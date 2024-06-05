@@ -2,8 +2,22 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "@react-navigation/native";
-import { router } from "expo-router";
-export default function ChatComponent({ item }) {
+import { ThemedView } from "./ThemedView";
+import { ThemedText } from "./ThemedText";
+
+interface ChatComponentProps {
+  item: {
+    id: string;
+    name: string;
+    messages: {
+      user: string;
+      text: string;
+      time: string;
+    }[];
+  };
+
+}
+export default function ChatComponent({ item }: ChatComponentProps) {
   const [messages, setMessages] = useState({});
 
   useLayoutEffect(() => {
@@ -11,29 +25,28 @@ export default function ChatComponent({ item }) {
   }, []);
   return (
     <Link to={`/chat/${item.id}`}>
-      <View style={styles.cchat}>
+      <ThemedView style={styles.cchat}>
         <Ionicons
           name="person-circle-outline"
           size={45}
-          color="black"
+          color="gray"
           style={styles.cavatar}
         />
 
-        <View style={styles.crightContainer}>
-          <View>
-            <Text style={styles.cusername}>{item.name}</Text>
-
-            <Text style={styles.cmessage}>
-              {messages?.text ? messages.text : "Tap to start chatting"}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.ctime}>
-              {messages?.time ? messages.time : "now"}
-            </Text>
-          </View>
-        </View>
-      </View>
+        <ThemedView style={styles.crightContainer}>
+          <ThemedView>
+            <ThemedText style={styles.cusername}>{item.name}</ThemedText>
+            <ThemedText style={styles.cmessage}>
+              {(messages as any)?.text ? (messages as any)?.text : "Tap to start chatting"}
+            </ThemedText>
+          </ThemedView>
+          <ThemedView>
+            <ThemedText style={styles.ctime}>
+              {(messages as any)?.time ? (messages as any)?.time : "now"}
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+      </ThemedView>
     </Link>
   );
 }
@@ -45,7 +58,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     paddingHorizontal: 15,
-    backgroundColor: "#fff",
     height: 80,
     marginBottom: 10,
   },

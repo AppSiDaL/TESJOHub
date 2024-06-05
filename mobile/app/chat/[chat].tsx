@@ -1,25 +1,22 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
-  View,
-  TextInput,
-  Text,
   FlatList,
   Pressable,
   StyleSheet,
 } from "react-native";
 import socket from "@/utils/socket";
 import MessageComponent from "@/components/MessageComponent";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedInputText } from "@/components/ThemedInputText";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function Page() {
   const [user, setUser] = useState("gil");
   const local = useLocalSearchParams();
-  console.log(local.chat)
+  console.log(local.chat);
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
-
-
 
   const handleNewMessage = () => {
     const hour =
@@ -35,7 +32,7 @@ export default function Page() {
     if (user) {
       socket.emit("newMessage", {
         message,
-        room_id: local.chat,
+        roomId: local.chat,
         user,
         timestamp: { hour, mins },
       });
@@ -44,16 +41,16 @@ export default function Page() {
 
   useLayoutEffect(() => {
     socket.emit("findRoom", local.chat);
-    socket.on("foundRoom", (roomChats) => setChatMessages(roomChats));
+    socket.on("foundRoom", (roomChats: any) => setChatMessages(roomChats));
   }, []);
 
   useEffect(() => {
-    socket.on("foundRoom", (roomChats) => setChatMessages(roomChats));
+    socket.on("foundRoom", (roomChats: any) => setChatMessages(roomChats));
   }, [socket]);
 
   return (
-    <View style={styles.messagingscreen}>
-      <View
+    <ThemedView style={styles.messagingscreen}>
+      <ThemedView
         style={[
           styles.messagingscreen,
           { paddingVertical: 15, paddingHorizontal: 10 },
@@ -69,10 +66,10 @@ export default function Page() {
         ) : (
           ""
         )}
-      </View>
+      </ThemedView>
 
-      <View style={styles.messaginginputContainer}>
-        <TextInput
+      <ThemedView style={styles.messaginginputContainer}>
+        <ThemedInputText
           style={styles.messaginginput}
           onChangeText={(value) => setMessage(value)}
         />
@@ -80,12 +77,12 @@ export default function Page() {
           style={styles.messagingbuttonContainer}
           onPress={handleNewMessage}
         >
-          <View>
-            <Text style={{ color: "#f2f0f1", fontSize: 20 }}>SEND</Text>
-          </View>
+          <ThemedText style={{ color: "#f2f0f1", fontSize: 20 }}>
+            SEND
+          </ThemedText>
         </Pressable>
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 }
 const styles = StyleSheet.create({
@@ -95,7 +92,6 @@ const styles = StyleSheet.create({
   messaginginputContainer: {
     width: "100%",
     minHeight: 100,
-    backgroundColor: "white",
     paddingVertical: 30,
     paddingHorizontal: 15,
     justifyContent: "center",
@@ -116,6 +112,3 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
 });
-
-
-
