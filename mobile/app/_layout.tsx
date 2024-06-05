@@ -22,8 +22,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 SplashScreen.preventAutoHideAsync();
 
 import { useNavigation } from '@react-navigation/native';
-import { Button } from "react-native";
-import { ThemedButton } from "@/components/ThemedButton";
 import { AuthContext } from "@/hooks/AuthContext";
 
 export default function RootLayout() {
