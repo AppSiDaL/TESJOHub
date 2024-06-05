@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform, View } from "react-native";
+import { StyleSheet, Image, Platform, View, Pressable } from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -16,17 +16,22 @@ import { defaultAvatar, defaultCover } from "@/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import likeService from "@/services/likeService";
-import { router } from 'expo-router';
+import { router } from "expo-router";
 import { AuthContext } from "@/hooks/AuthContext";
-
+import { ChangePicture } from "@/components/ChangePicture";
 
 export default function ProfileScreen() {
   const { onLogout } = useContext(AuthContext);
-  
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [commentsModalContent, setCommentsModalContent] = useState([]);
+  const [changePictureModalVisible, setChangePictureModalVisible] =
+    useState(false);
+  const [changePictureModalVisibleAvatar, setChangePictureModalVisibleAvatar] =
+    useState(false);
+
   const [userId, setUserId] = useState<String>("");
   const getUSer = async () => {
     const user = await AsyncStorage.getItem("userId");
@@ -43,7 +48,11 @@ export default function ProfileScreen() {
     console.log(response);
     return response.data;
   };
-  const { data: user, isLoading: userLoading } = useQuery("user", fetchUser);
+  const {
+    data: user,
+    isLoading: userLoading,
+    refetch: refetchUser,
+  } = useQuery("user", fetchUser);
   const fetchPosts = async () => {
     const response = await postsService.getUserPosts();
     return response.data;
@@ -91,17 +100,33 @@ export default function ProfileScreen() {
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
         <ThemedView style={styles.headerContainer}>
-          <Image
-            source={{ uri: user.coverUrl ?? defaultCover }}
-            style={styles.headerImage}
-          />
-          <Image
-            source={{ uri: user.avatarImage ?? defaultAvatar }}
-            style={styles.avatarImage}
-          />
+          <Pressable onPress={() => setChangePictureModalVisible(true)}>
+            <Image
+              source={{ uri: user.coverUrl ?? defaultCover }}
+              style={styles.headerImage}
+            />
+          </Pressable>
+          <Pressable onPress={() => setChangePictureModalVisibleAvatar(true)}>
+            <Image
+              source={{ uri: user.avatarUrl ?? defaultAvatar }}
+              style={styles.avatarImage}
+            />
+          </Pressable>
         </ThemedView>
       }
     >
+      <ChangePicture
+        modalVisible={changePictureModalVisible}
+        setModalVisible={setChangePictureModalVisible}
+        mode="cover"
+        refresh={refetchUser}
+      />
+      <ChangePicture
+        modalVisible={changePictureModalVisibleAvatar}
+        setModalVisible={setChangePictureModalVisibleAvatar}
+        mode="avatar"
+        refresh={refetchUser}
+      />
       <ThemedLikesModal
         modalVisible={modalVisible}
         modalContent={modalContent}
@@ -129,11 +154,7 @@ export default function ProfileScreen() {
               <ThemedText style={{ marginLeft: 70 }}>...</ThemedText>
             )}
           </ThemedView>
-          <TabBarIcon
-            name="close"
-            color="red"
-            onPress={onLogout}
-          />
+          <TabBarIcon name="close" color="red" onPress={onLogout} />
         </ThemedView>
         <ThemedText style={styles.bio}>{user.bio}</ThemedText>
       </ThemedView>
